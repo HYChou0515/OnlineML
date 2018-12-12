@@ -21,6 +21,8 @@ public class DataServiceImpl implements DataService {
         this.dataEntityRepository = dataEntityRepository;
     }
 
+    static final String DOES_NOT_EXIST = " does not exist";
+
     @Override
     public List<DataInfo> listDataInfo() {
         return dataEntityRepository.findDataInfoBy();
@@ -35,7 +37,7 @@ public class DataServiceImpl implements DataService {
         if(dataEntity.isPresent()) {
             return dataEntity.get();
         } else {
-            throw new ElementNotExistException("Data with name="+name+" does not exist");
+            throw new ElementNotExistException("Data with name="+name+DOES_NOT_EXIST);
         }
     }
 
@@ -57,7 +59,7 @@ public class DataServiceImpl implements DataService {
             throw new NullParameterException("Trying to update for null data");
         }
         if( ! dataEntityRepository.existsByName(dataEntity.getName())) {
-            throw new ElementNotExistException("Data with name="+dataEntity.getName()+" does not exist");
+            throw new ElementNotExistException("Data with name="+dataEntity.getName()+DOES_NOT_EXIST);
         }
         dataEntity = dataEntityRepository.save(dataEntity);
         return dataEntity;
@@ -69,7 +71,7 @@ public class DataServiceImpl implements DataService {
             throw new NullParameterException("Trying to delete data with empty name");
         }
         if( ! dataEntityRepository.existsByName(name)) {
-            throw new ElementNotExistException("Data with id="+name+" does not exist");
+            throw new ElementNotExistException("Data with id="+name+DOES_NOT_EXIST);
         }
         dataEntityRepository.deleteByName(name);
     }

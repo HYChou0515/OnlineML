@@ -36,11 +36,10 @@ public class DataPoint extends AbstractDataStructure {
         this.x = x;
     }
 
-    public static DataPoint parseDataPoint(String s) throws NullPointerException, NumberFormatException{
+    public static DataPoint parseDataPoint(String s) {
         if (s == null) {
             throw new NullPointerException("Unable to parse null string");
         }
-        DataPoint dataPoint = new DataPoint();
 
         // split space and ignore duplicate spaces
         String[] tokens = s.split("\\s+");
@@ -74,7 +73,7 @@ public class DataPoint extends AbstractDataStructure {
         return fields;
     }
 
-    public static List<DataPoint> listOf(byte[] dataByteArray) throws IOException, NumberFormatException, NullPointerException{
+    public static List<DataPoint> listOf(byte[] dataByteArray) throws IOException {
         InputStream inputStream = new ByteArrayInputStream(dataByteArray);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         List<DataPoint> data = new ArrayList<>();

@@ -2,7 +2,8 @@ package io.hychou.data.dao;
 
 import io.hychou.data.entity.DataEntity;
 import io.hychou.data.entity.DataInfo;
-import org.springframework.data.repository.CrudRepository;;import java.util.List;
+import org.springframework.data.repository.CrudRepository;
+import java.util.List;
 import java.util.Optional;
 
 

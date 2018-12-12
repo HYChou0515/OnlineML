@@ -78,5 +78,5 @@ test {
         destinationFile = file("${buildDir}/jacoco/jacocoTest.exec")
         classDumpDir = file("${buildDir}/jacoco/classpathdumps")
     }
-    finalizedBy jacocoTestReport
+    finalizedBy jacocoTestReport, project.tasks["sonarqube"]
 }

@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -84,23 +85,23 @@ public class ModelControllerTest extends ControllerTest {
         );
     }
 
-//    @Test
-//    public void readModelById_givenServiceException_thenReturnProperResponseEntity() throws Exception {
-//        // Arrange
-//        given(modelService.readModelById(a9aModel.getId())).willThrow(mockException);
-//
-//        // Act
-//        MockHttpServletResponse response = mvc.perform(
-//                get("/model/"+a9aModel.getId()).accept(MediaType.MULTIPART_FORM_DATA_VALUE))
-//                .andReturn().getResponse();
-//
-//        // Assert
-//        assertAll("response",
-//                () -> assertEquals(HttpStatus.I_AM_A_TEAPOT.value(), response.getStatus()),
-//                () -> assertEquals(Constant.EMPTY_STRING, response.getContentAsString()),
-//                () -> assertEquals(MOCK_EXCEPTION_ERROR_MESSAGE, response.getHeader(MessageResponseEntity.HTTP_HEADER_STATUS_MESSAGE))
-//        );
-//    }
+    @Test
+    public void readModelById_givenServiceException_thenReturnProperResponseEntity() throws Exception {
+        // Arrange
+        given(modelService.readModelById(a9aModel.getId())).willThrow(mockException);
+
+        // Act
+        MockHttpServletResponse response = mvc.perform(
+                get("/model/"+a9aModel.getId()).accept(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andReturn().getResponse();
+
+        // Assert
+        assertAll("response",
+                () -> assertEquals(HttpStatus.I_AM_A_TEAPOT.value(), response.getStatus()),
+                () -> assertEquals(Constant.EMPTY_STRING, response.getContentAsString()),
+                () -> assertEquals(MOCK_EXCEPTION_ERROR_MESSAGE, response.getHeader(MessageResponseEntity.HTTP_HEADER_STATUS_MESSAGE))
+        );
+    }
 
     // =====================================================================
     // createModel
@@ -121,6 +122,25 @@ public class ModelControllerTest extends ControllerTest {
         assertAll(
                 () -> assertEquals(response.getStatus(), HttpStatus.OK.value()),
                 () -> then(modelService).should(times(1)).createModel(a9aModelAnother)
+        );
+    }
+
+    @Test
+    public void createModel_givenServiceException_thenReturnProperResponseEntity() throws Exception {
+        // Arrange
+        MockMultipartFile multipartFile = new MockMultipartFile("blob", a9aModelAnother.getDataBytes());
+        given(modelService.createModel(a9aModelAnother)).willThrow(mockException);
+
+        // Act
+        MockHttpServletResponse response = mvc.perform(
+                multipart("/model").file(multipartFile))
+                .andReturn().getResponse();
+
+        // Assert
+        assertAll("response",
+                () -> assertEquals(HttpStatus.I_AM_A_TEAPOT.value(), response.getStatus()),
+                () -> assertEquals(Constant.EMPTY_STRING, response.getContentAsString()),
+                () -> assertEquals(MOCK_EXCEPTION_ERROR_MESSAGE, response.getHeader(MessageResponseEntity.HTTP_HEADER_STATUS_MESSAGE))
         );
     }
 
@@ -146,6 +166,25 @@ public class ModelControllerTest extends ControllerTest {
         );
     }
 
+    @Test
+    public void updateData_givenServiceException_thenReturnProperResponseEntity () throws Exception {
+        // Arrange
+        MockMultipartFile multipartFile = new MockMultipartFile("blob", a9aModel.getDataBytes());
+        given(modelService.updateModel(a9aModel)).willThrow(mockException);
+
+        // Act
+        MockHttpServletResponse response = mvc.perform(
+                putMultipart("/model/"+a9aModel.getId()).file(multipartFile))
+                .andReturn().getResponse();
+
+        // Assert
+        assertAll("response",
+                () -> assertEquals(HttpStatus.I_AM_A_TEAPOT.value(), response.getStatus()),
+                () -> assertEquals(Constant.EMPTY_STRING, response.getContentAsString()),
+                () -> assertEquals(MOCK_EXCEPTION_ERROR_MESSAGE, response.getHeader(MessageResponseEntity.HTTP_HEADER_STATUS_MESSAGE))
+        );
+    }
+
     // =====================================================================
     // deleteModelById
     // =====================================================================
@@ -164,6 +203,24 @@ public class ModelControllerTest extends ControllerTest {
         assertAll("response",
                 () -> assertEquals(response.getStatus(), HttpStatus.OK.value()),
                 () -> then(modelService).should(times(1)).deleteModelById(a9aModel.getId())
+        );
+    }
+
+    @Test
+    public void deleteDataByName_givenServiceException_thenReturnProperResponseEntity () throws Exception {
+        // Arrange
+        doThrow(mockException).when(modelService).deleteModelById(a9aModel.getId());
+
+        // Act
+        MockHttpServletResponse response = mvc.perform(
+                delete("/model/"+a9aModel.getId()))
+                .andReturn().getResponse();
+
+        // Assert
+        assertAll("response",
+                () -> assertEquals(HttpStatus.I_AM_A_TEAPOT.value(), response.getStatus()),
+                () -> assertEquals(Constant.EMPTY_STRING, response.getContentAsString()),
+                () -> assertEquals(MOCK_EXCEPTION_ERROR_MESSAGE, response.getHeader(MessageResponseEntity.HTTP_HEADER_STATUS_MESSAGE))
         );
     }
 }

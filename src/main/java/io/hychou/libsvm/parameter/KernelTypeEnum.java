@@ -1,4 +1,4 @@
-package io.hychou.libsvm.entity;
+package io.hychou.libsvm.parameter;
 
 public enum KernelTypeEnum {
     LINEAR(0),

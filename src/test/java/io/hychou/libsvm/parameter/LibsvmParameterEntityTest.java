@@ -1,4 +1,4 @@
-package io.hychou.libsvm.entity;
+package io.hychou.libsvm.parameter;
 
 import io.hychou.common.DataStructureTest;
 import org.junit.Before;

@@ -7,8 +7,6 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringRunner.class)
 public class LibsvmParameterEntityTest extends DataStructureTest {
@@ -40,9 +38,7 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
         // given
         LibsvmParameterEntity e = entity;
         // when
-        boolean found = equalsThenHashCodeEqual(entity, e);
-        // assert
-        assertTrue(found);
+        assertEqualsAndHaveSameHashCode(entity, e);
     }
 
     @Test
@@ -65,9 +61,7 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
         ((LibsvmParameterEntity) e).setProbability(entity.getProbability());
 
         // when
-        boolean found = equalsThenHashCodeEqual(entity, e);
-        // assert
-        assertTrue(found);
+        assertEqualsAndHaveSameHashCode(entity, e);
     }
 
     @Test
@@ -90,9 +84,7 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
         e.setProbability(entity.getProbability());
 
         // when
-        boolean found = equalsThenHashCodeEqual(entity, e);
-        // assert
-        assertTrue(found);
+        assertEqualsAndHaveSameHashCode(entity, e);
     }
 
     @Test
@@ -115,9 +107,7 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
         e.setProbability(entity.getProbability());
 
         // when
-        boolean found = equalsThenHashCodeEqual(entity, e);
-        // assert
-        assertFalse(found);
+        assertNotEqualAndHaveDifferentHashCode(entity, e);
     }
 
     @Test
@@ -126,25 +116,16 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
         // given
         LibsvmParameterEntity e = null;
         // when
-        boolean found = equalsThenHashCodeEqual(entity, e);
-        // assert
-        assertFalse(found);
+        assertNotEqualAndHaveDifferentHashCode(entity, e);
     }
 
     @Test
     @Override
     public void equals_givenAnotherObject_thenFalseShouldBeFound() {
         // given
-        Integer n = new Integer(0);
+        Integer e = new Integer(0);
         // when
-        boolean found = equalsThenHashCodeEqual(entity, n);
-        // assert
-        assertFalse(found);
-    }
-
-    @Test
-    @Override
-    public void hashCode_thenCorrectHashShouldBeFound() {
+        assertNotEqualAndHaveDifferentHashCode(entity, e);
     }
 
     @Test

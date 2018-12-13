@@ -10,116 +10,57 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 
-public class MessageResponseEntity<T> extends HttpEntity<T> {
+public class MessageResponseEntity<T> extends ResponseEntity<T> {
 
     public final static String HTTP_HEADER_STATUS_MESSAGE = "Status-Message";
-    private final Object status;
 
     public MessageResponseEntity(MultiValueMap<String, String> headers, HttpStatus status) {
         this(null, headers, status);
     }
 
     public MessageResponseEntity(@Nullable T body, MultiValueMap<String, String> headers, HttpStatus status) {
-        super(body, headers);
+        super(body, headers, status);
         Assert.notNull(headers, "HttpHeaders must not be null");
         Assert.notEmpty(headers, "HttpHeaders must not be empty");
         Assert.notNull(status, "HttpStatus must not be null");
-        this.status = status;
     }
 
-    private MessageResponseEntity(@Nullable T body, MultiValueMap<String, String> headers, Object status) {
-        super(body, headers);
-        Assert.notNull(headers, "HttpHeaders must not be null");
-        Assert.notEmpty(headers, "HttpHeaders must not be empty");
-        Assert.notNull(status, "HttpStatus must not be null");
-        this.status = status;
-    }
-
-
-    public HttpStatus getStatusCode() {
-        if (this.status instanceof HttpStatus) {
-            return (HttpStatus) this.status;
+    private static HttpStatus toStatusCode(Object status) {
+        if (status instanceof HttpStatus) {
+            return (HttpStatus) status;
         }
         else {
-            return HttpStatus.valueOf((Integer) this.status);
+            return HttpStatus.valueOf((Integer) status);
         }
     }
-
-    public int getStatusCodeValue() {
-        if (this.status instanceof HttpStatus) {
-            return ((HttpStatus) this.status).value();
-        }
-        else {
-            return (Integer) this.status;
-        }
-    }
-
-
-    @Override
-    public boolean equals(@Nullable Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (!super.equals(other)) {
-            return false;
-        }
-        MessageResponseEntity<?> otherEntity = (MessageResponseEntity<?>) other;
-        return ObjectUtils.nullSafeEquals(this.status, otherEntity.status);
-    }
-
-    @Override
-    public int hashCode() {
-        return (super.hashCode() * 29 + ObjectUtils.nullSafeHashCode(this.status));
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder("<");
-        builder.append(this.status.toString());
-        if (this.status instanceof HttpStatus) {
-            builder.append(' ');
-            builder.append(((HttpStatus) this.status).getReasonPhrase());
-        }
-        builder.append(',');
-        T body = getBody();
-        HttpHeaders headers = getHeaders();
-        if (body != null) {
-            builder.append(body);
-            builder.append(',');
-        }
-        builder.append(headers);
-        builder.append('>');
-        return builder.toString();
-    }
-
 
     // Static builder methods
 
-    public static MessageResponseEntity.BodyBuilder status(HttpStatus status, String message) {
+    public static BodyBuilder status(HttpStatus status, String message) {
         Assert.notNull(status, "HttpStatus must not be null");
         Assert.notNull(message, "StatusMessage must not be null");
-        return new MessageResponseEntity.DefaultBuilder(status, message);
+        return new DefaultBuilder(status, message);
     }
 
-    public static MessageResponseEntity.BodyBuilder status(int status, String message) {
-        return new MessageResponseEntity.DefaultBuilder(status, message);
+    public static BodyBuilder status(int status, String message) {
+        return new DefaultBuilder(status, message);
     }
 
-    public static MessageResponseEntity.BodyBuilder ok(String message) {
+    public static BodyBuilder ok(String message) {
         return status(HttpStatus.OK, message);
     }
 
     public static <T> MessageResponseEntity<T> ok(T body, String message) {
-        MessageResponseEntity.BodyBuilder builder = ok(message);
+        BodyBuilder builder = ok(message);
         return builder.body(body);
     }
 
-    public static MessageResponseEntity.BodyBuilder created(URI location, String message) {
-        MessageResponseEntity.BodyBuilder builder = status(HttpStatus.CREATED, message);
+    public static BodyBuilder created(URI location, String message) {
+        BodyBuilder builder = status(HttpStatus.CREATED, message);
         return builder.location(location);
     }
 
-    public static MessageResponseEntity.BodyBuilder accepted(String message) {
+    public static BodyBuilder accepted(String message) {
         return status(HttpStatus.ACCEPTED, message);
     }
 
@@ -127,7 +68,7 @@ public class MessageResponseEntity<T> extends HttpEntity<T> {
         return status(HttpStatus.NO_CONTENT, message);
     }
 
-    public static MessageResponseEntity.BodyBuilder badRequest(String message) {
+    public static BodyBuilder badRequest(String message) {
         return status(HttpStatus.BAD_REQUEST, message);
     }
 
@@ -135,12 +76,19 @@ public class MessageResponseEntity<T> extends HttpEntity<T> {
         return status(HttpStatus.NOT_FOUND, message);
     }
 
-    public static MessageResponseEntity.BodyBuilder unprocessableEntity(String message) {
+    public static BodyBuilder unprocessableEntity(String message) {
         return status(HttpStatus.UNPROCESSABLE_ENTITY, message);
     }
 
-    public interface HeadersBuilder<B extends MessageResponseEntity.HeadersBuilder<B>> {
+    public interface HeadersBuilder<B extends HeadersBuilder<B>> {
 
+        /**
+         * Add the given, single header value under the given name.
+         * @param headerName the header name
+         * @param headerValues the header value(s)
+         * @return this builder
+         * @see HttpHeaders#add(String, String)
+         */
         B header(String headerName, String... headerValues);
 
         B headers(@Nullable HttpHeaders headers);
@@ -160,20 +108,18 @@ public class MessageResponseEntity<T> extends HttpEntity<T> {
         <T> MessageResponseEntity<T> build();
     }
 
+    public interface BodyBuilder extends HeadersBuilder<BodyBuilder> {
 
-    public interface BodyBuilder extends MessageResponseEntity.HeadersBuilder<MessageResponseEntity.BodyBuilder> {
+        BodyBuilder contentLength(long contentLength);
 
-        MessageResponseEntity.BodyBuilder contentLength(long contentLength);
+        BodyBuilder contentType(MediaType contentType);
 
-        MessageResponseEntity.BodyBuilder contentType(MediaType contentType);
-
-        <T> MessageResponseEntity<T> multipartFormData(String filename, @Nullable T body);
+        <T> MessageResponseEntity<T> multipartFormData(String filename, T body);
 
         <T> MessageResponseEntity<T> body(@Nullable T body);
     }
 
-
-    private static class DefaultBuilder implements MessageResponseEntity.BodyBuilder {
+    private static class DefaultBuilder implements BodyBuilder {
 
         private final Object statusCode;
 
@@ -185,7 +131,7 @@ public class MessageResponseEntity<T> extends HttpEntity<T> {
         }
 
         @Override
-        public MessageResponseEntity.BodyBuilder header(String headerName, String... headerValues) {
+        public BodyBuilder header(String headerName, String... headerValues) {
             for (String headerValue : headerValues) {
                 this.headers.add(headerName, headerValue);
             }
@@ -193,7 +139,7 @@ public class MessageResponseEntity<T> extends HttpEntity<T> {
         }
 
         @Override
-        public MessageResponseEntity.BodyBuilder headers(@Nullable HttpHeaders headers) {
+        public BodyBuilder headers(@Nullable HttpHeaders headers) {
             if (headers != null) {
                 this.headers.putAll(headers);
             }
@@ -201,25 +147,25 @@ public class MessageResponseEntity<T> extends HttpEntity<T> {
         }
 
         @Override
-        public MessageResponseEntity.BodyBuilder allow(HttpMethod... allowedMethods) {
+        public BodyBuilder allow(HttpMethod... allowedMethods) {
             this.headers.setAllow(new LinkedHashSet<>(Arrays.asList(allowedMethods)));
             return this;
         }
 
         @Override
-        public MessageResponseEntity.BodyBuilder contentLength(long contentLength) {
+        public BodyBuilder contentLength(long contentLength) {
             this.headers.setContentLength(contentLength);
             return this;
         }
 
         @Override
-        public MessageResponseEntity.BodyBuilder contentType(MediaType contentType) {
+        public BodyBuilder contentType(MediaType contentType) {
             this.headers.setContentType(contentType);
             return this;
         }
 
         @Override
-        public MessageResponseEntity.BodyBuilder eTag(String etag) {
+        public BodyBuilder eTag(String etag) {
             if (!etag.startsWith("\"") && !etag.startsWith("W/\"")) {
                 etag = "\"" + etag;
             }
@@ -231,19 +177,19 @@ public class MessageResponseEntity<T> extends HttpEntity<T> {
         }
 
         @Override
-        public MessageResponseEntity.BodyBuilder lastModified(long date) {
+        public BodyBuilder lastModified(long date) {
             this.headers.setLastModified(date);
             return this;
         }
 
         @Override
-        public MessageResponseEntity.BodyBuilder location(URI location) {
+        public BodyBuilder location(URI location) {
             this.headers.setLocation(location);
             return this;
         }
 
         @Override
-        public MessageResponseEntity.BodyBuilder cacheControl(CacheControl cacheControl) {
+        public BodyBuilder cacheControl(CacheControl cacheControl) {
             String ccValue = cacheControl.getHeaderValue();
             if (ccValue != null) {
                 this.headers.setCacheControl(cacheControl.getHeaderValue());
@@ -252,7 +198,7 @@ public class MessageResponseEntity<T> extends HttpEntity<T> {
         }
 
         @Override
-        public MessageResponseEntity.BodyBuilder varyBy(String... requestHeaders) {
+        public BodyBuilder varyBy(String... requestHeaders) {
             this.headers.setVary(Arrays.asList(requestHeaders));
             return this;
         }
@@ -272,7 +218,7 @@ public class MessageResponseEntity<T> extends HttpEntity<T> {
 
         @Override
         public <T> MessageResponseEntity<T> body(@Nullable T body) {
-            return new MessageResponseEntity<>(body, this.headers, this.statusCode);
+            return new MessageResponseEntity<>(body, this.headers, toStatusCode(this.statusCode));
         }
     }
 

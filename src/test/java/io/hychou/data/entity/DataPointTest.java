@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DataPointTest extends DataStructureTest {
 
     private DataPoint d1;
-    private int d1HashCode = -1088387137;
     private String d1ToString = "DataPoint{y=1.0, x=[IndexValue{index=2, value=3.0}, IndexValue{index=5, value=6.0}]}";
     
     @Before
@@ -30,8 +29,7 @@ public class DataPointTest extends DataStructureTest {
         // given
         DataPoint d = d1;
         // when
-        boolean found = equalsThenHashCodeEqual(d1, d);
-        assertTrue(found);
+        assertEqualsAndHaveSameHashCode(d1, d);
     }
     
     @Test
@@ -42,8 +40,7 @@ public class DataPointTest extends DataStructureTest {
         ((DataPoint) d).setX(d1.getX());
         ((DataPoint) d).setY(d1.getY());
         // when
-        boolean found = equalsThenHashCodeEqual(d1, d);
-        assertTrue(found);
+        assertEqualsAndHaveSameHashCode(d1, d);
     }
     
     @Test
@@ -54,8 +51,7 @@ public class DataPointTest extends DataStructureTest {
         d.setX(d1.getX());
         d.setY(d1.getY());
         // when
-        boolean found = equalsThenHashCodeEqual(d1, d);
-        assertTrue(found);
+        assertEqualsAndHaveSameHashCode(d1, d);
     }
     
     @Test
@@ -66,8 +62,7 @@ public class DataPointTest extends DataStructureTest {
         d.setX(d1.getX());
         d.setY(d1.getY()+1);
         // when
-        boolean found = equalsThenHashCodeEqual(d1, d);
-        assertFalse(found);
+        assertNotEqualAndHaveDifferentHashCode(d1, d);
     }
     
     @Test
@@ -76,8 +71,7 @@ public class DataPointTest extends DataStructureTest {
         // given
         DataPoint n = null;
         // when
-        boolean found = equalsThenHashCodeEqual(d1, n);
-        assertFalse(found);
+        assertNotEqualAndHaveDifferentHashCode(d1, n);
     }
     
     @Test
@@ -86,15 +80,7 @@ public class DataPointTest extends DataStructureTest {
         // given
         Integer n = new Integer(0);
         // when
-        boolean found = equalsThenHashCodeEqual(d1, n);
-        assertFalse(found);
-    }
-    
-    @Test
-    @Override
-    public void hashCode_thenCorrectHashShouldBeFound() {
-        int found = d1.hashCode();
-        assertEquals(d1HashCode, found, "Hashcode");
+        assertNotEqualAndHaveDifferentHashCode(d1, n);
     }
     
     @Test

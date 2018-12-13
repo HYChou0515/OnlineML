@@ -21,7 +21,7 @@ public class DataServiceImpl implements DataService {
         this.dataEntityRepository = dataEntityRepository;
     }
 
-    static final String DOES_NOT_EXIST = " does not exist";
+    private static final String DOES_NOT_EXIST = " does not exist";
 
     @Override
     public List<DataInfo> listDataInfo() {
@@ -31,7 +31,7 @@ public class DataServiceImpl implements DataService {
     @Override
     public DataEntity readDataByName(String name) throws ServiceException {
         if(name == null) {
-            throw new NullParameterException("Trying to query with null id");
+            throw new NullParameterException("Trying to query with null name");
         }
         Optional<DataEntity> dataEntity = dataEntityRepository.findByName(name);
         if(dataEntity.isPresent()) {

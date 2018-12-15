@@ -22,7 +22,7 @@ public class LibsvmParameterEntity extends AbstractDataStructure {
     private Boolean shrinking;
     private Boolean probability;
 
-    // Statuc builder methods
+    // Static builder methods
 
     public static ParameterBuilder build() {
         return new DefaultBuilder();
@@ -47,7 +47,7 @@ public class LibsvmParameterEntity extends AbstractDataStructure {
     }
 
     private static class DefaultBuilder implements ParameterBuilder {
-        private LibsvmParameterEntity libsvmParameterEntity;
+        private LibsvmParameterEntity libsvmParameterEntity = new LibsvmParameterEntity();
 
         @Override
         public ParameterBuilder svmType(SvmTypeEnum svmType) {

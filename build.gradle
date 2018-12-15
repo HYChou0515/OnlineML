@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        mavenCentral()
+		maven { url 'http://repo1.maven.org/maven2' }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
@@ -20,7 +20,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+	maven { url 'http://repo1.maven.org/maven2' }
 }
 
 dependencies {
@@ -78,5 +78,5 @@ test {
         destinationFile = file("${buildDir}/jacoco/jacocoTest.exec")
         classDumpDir = file("${buildDir}/jacoco/classpathdumps")
     }
-    finalizedBy jacocoTestReport, project.tasks["sonarqube"]
+    finalizedBy jacocoTestReport
 }

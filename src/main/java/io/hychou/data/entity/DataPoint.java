@@ -36,13 +36,13 @@ public class DataPoint extends AbstractDataStructure {
         this.x = x;
     }
 
-    public static DataPoint parseDataPoint(String s) {
-        if (s == null) {
+    public static DataPoint parseDataPoint(String line) {
+        if (line == null) {
             throw new NullPointerException("Unable to parse null string");
         }
 
         // split space and ignore duplicate spaces
-        String[] tokens = s.split("\\s+");
+        String[] tokens = line.split("\\s+");
         Double y = Double.parseDouble(tokens[0]);
         List<IndexValue> x = new ArrayList<>(tokens.length - 1);
         int lastIndex = -1;

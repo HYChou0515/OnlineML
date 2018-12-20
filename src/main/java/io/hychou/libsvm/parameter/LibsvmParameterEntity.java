@@ -2,9 +2,11 @@ package io.hychou.libsvm.parameter;
 
 import io.hychou.common.AbstractDataStructure;
 import io.hychou.common.SignificantField;
+import libsvm.svm_parameter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class LibsvmParameterEntity extends AbstractDataStructure {
 
@@ -125,6 +127,42 @@ public class LibsvmParameterEntity extends AbstractDataStructure {
         public LibsvmParameterEntity done() {
             return this.libsvmParameterEntity;
         }
+    }
+
+    public svm_parameter toSvmParameter(svm_parameter defaultParam) {
+        svm_parameter param = (svm_parameter) defaultParam.clone();
+        if(Objects.isNull(param)){
+            param = new svm_parameter();
+        }
+        final int TRUE = 1;
+        final int FALSE = 0;
+        if(Objects.nonNull(getSvmType()))
+            param.svm_type = getSvmType().getValue();
+        if(Objects.nonNull(getKernelType()))
+            param.kernel_type = getKernelType().getValue();
+        if(Objects.nonNull(getDegree()))
+            param.degree = getDegree();
+        if(Objects.nonNull(getGamma()))
+            param.gamma = getGamma();
+        if(Objects.nonNull(getCoef0()))
+            param.coef0 = getCoef0();
+
+        if(Objects.nonNull(getCacheSize()))
+            param.cache_size = getCacheSize();
+        if(Objects.nonNull(getEps()))
+            param.eps = getEps();
+        if(Objects.nonNull(getC()))
+            param.C = getC();
+        if(Objects.nonNull(getNu()))
+            param.nu = getNu();
+        if(Objects.nonNull(getP()))
+            param.p = getP();
+        if(Objects.nonNull(getShrinking()))
+            param.shrinking = getShrinking() ? TRUE : FALSE;
+        if(Objects.nonNull(getProbability()))
+            param.probability = getProbability() ? TRUE : FALSE;
+
+        return param;
     }
 
     public SvmTypeEnum getSvmType() {

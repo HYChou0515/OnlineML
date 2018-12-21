@@ -1,8 +1,8 @@
 package io.hychou.libsvm.model.controller;
 
 import io.hychou.common.MessageResponseEntity;
-import io.hychou.common.exception.ServiceException;
-import io.hychou.common.exception.servererror.MultipartFileCannotGetBytesException;
+import io.hychou.common.exception.service.ServiceException;
+import io.hychou.common.exception.service.servererror.MultipartFileCannotGetBytesException;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.model.service.ModelService;
 import org.springframework.beans.factory.annotation.Autowired;

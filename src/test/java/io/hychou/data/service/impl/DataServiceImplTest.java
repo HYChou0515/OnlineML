@@ -1,9 +1,10 @@
 package io.hychou.data.service.impl;
 
-import io.hychou.common.exception.ServiceException;
-import io.hychou.common.exception.clienterror.ElementAlreadyExistException;
-import io.hychou.common.exception.clienterror.ElementNotExistException;
-import io.hychou.common.exception.clienterror.NullParameterException;
+import io.hychou.common.exception.service.ServiceException;
+import io.hychou.common.exception.service.clienterror.ElementAlreadyExistException;
+import io.hychou.common.exception.service.clienterror.ElementNotExistException;
+import io.hychou.common.exception.service.clienterror.IllegalParameterException;
+import io.hychou.common.exception.service.clienterror.NullParameterException;
 import io.hychou.data.dao.DataEntityRepository;
 import io.hychou.data.entity.DataEntity;
 import io.hychou.data.entity.DataInfo;
@@ -13,7 +14,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -30,21 +34,29 @@ public class DataServiceImplTest {
     private DataEntity a9a;
     private DataEntity rcv1;
     private DataEntity a9aOther;
+    private DataEntity badData;
     private List<DataInfo> dataInfoList;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        File heartScale = ResourceUtils.getFile("classpath:data/heart_scale");
+        File heartScaleBad = ResourceUtils.getFile("classpath:data/bad/index_not_ascending");
+
         a9a = new DataEntity();
         a9a.setName("a9a");
-        a9a.setDataBytes("This is a9a".getBytes());
+        a9a.setDataBytes(Files.readAllBytes(heartScale.toPath()));
 
         rcv1 = new DataEntity();
         rcv1.setName("rcv1");
-        rcv1.setDataBytes("This is a9a".getBytes());
+        a9a.setDataBytes(Files.readAllBytes(heartScale.toPath()));
 
         a9aOther = new DataEntity();
         a9aOther.setName("a9aOther");
-        a9aOther.setDataBytes("This is a9a".getBytes());
+        a9a.setDataBytes(Files.readAllBytes(heartScale.toPath()));
+
+        badData = new DataEntity();
+        badData.setName("badData");
+        badData.setDataBytes(Files.readAllBytes(heartScaleBad.toPath()));
 
         dataInfoList = Arrays.asList(
                 new DataInfoEntity(a9a.getName()),
@@ -149,6 +161,13 @@ public class DataServiceImplTest {
         // Assert
         // Act
         assertThrows(ElementAlreadyExistException.class, () -> dataService.createData(a9a));
+    }
+
+    @Test
+    public void createData_givenInvalidData_thenThrowIllegalParameterException() {
+        // Arrange
+        // Act
+        assertThrows(IllegalParameterException.class, () -> dataService.createData(badData));
     }
 
     // =====================================================================

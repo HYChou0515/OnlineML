@@ -1,6 +1,6 @@
-package io.hychou.common.exception.clienterror;
+package io.hychou.common.exception.service.clienterror;
 
-import io.hychou.common.exception.ServiceException;
+import io.hychou.common.exception.service.ServiceException;
 import org.springframework.http.HttpStatus;
 
 public class IllegalParameterException extends ServiceException {

@@ -1,8 +1,8 @@
 package io.hychou.libsvm.model.service.impl;
 
-import io.hychou.common.exception.ServiceException;
-import io.hychou.common.exception.clienterror.ElementNotExistException;
-import io.hychou.common.exception.clienterror.NullParameterException;
+import io.hychou.common.exception.service.ServiceException;
+import io.hychou.common.exception.service.clienterror.ElementNotExistException;
+import io.hychou.common.exception.service.clienterror.NullParameterException;
 import io.hychou.libsvm.model.dao.ModelEntityRepository;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.model.service.ModelService;

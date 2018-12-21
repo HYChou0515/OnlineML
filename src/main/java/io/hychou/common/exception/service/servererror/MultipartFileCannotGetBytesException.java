@@ -1,6 +1,6 @@
-package io.hychou.common.exception.servererror;
+package io.hychou.common.exception.service.servererror;
 
-import io.hychou.common.exception.ServiceException;
+import io.hychou.common.exception.service.ServiceException;
 import org.springframework.http.HttpStatus;
 
 public class MultipartFileCannotGetBytesException extends ServiceException {

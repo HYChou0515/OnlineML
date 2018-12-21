@@ -1,4 +1,4 @@
-package io.hychou.common.exception;
+package io.hychou.common.exception.service;
 
 import io.hychou.common.MessageResponseEntity;
 import org.springframework.http.HttpStatus;

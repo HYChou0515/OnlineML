@@ -2,7 +2,10 @@ package io.hychou.data.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.HttpHeaders;
+import io.hychou.common.Constant;
 import io.hychou.common.ControllerTest;
+import io.hychou.common.MessageResponseEntity;
+import io.hychou.common.exception.service.ServiceException;
 import io.hychou.data.entity.DataEntity;
 import io.hychou.data.entity.DataInfo;
 import io.hychou.data.service.DataService;
@@ -28,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -48,8 +52,6 @@ public class DataControllerTest extends ControllerTest {
 
     // JacksonTester is auto built in setUp
     // JacksonTester.initFields();
-    private JacksonTester<DataEntity> dataEntityJacksonTester;
-    private JacksonTester<List<DataEntity>> dataEntityListJacksonTester;
     private JacksonTester<List<DataInfo>> dataInfoListJacksonTester;
 
     private class DataInfoEntity implements DataInfo {
@@ -64,6 +66,14 @@ public class DataControllerTest extends ControllerTest {
             return null;
         }
     }
+
+    private static final String MOCK_EXCEPTION_ERROR_MESSAGE = "This is a mock exception";
+    private ServiceException mockException = new ServiceException(MOCK_EXCEPTION_ERROR_MESSAGE) {
+        @Override
+        public HttpStatus getHttpStatus() {
+            return HttpStatus.I_AM_A_TEAPOT;
+        }
+    };
 
     @Before
     public void setUp() {
@@ -132,6 +142,24 @@ public class DataControllerTest extends ControllerTest {
         );
     }
 
+    @Test
+    public void readModelById_givenServiceException_thenReturnProperResponseEntity() throws Exception {
+        // Arrange
+        given(dataService.readDataByName(a9a.getName())).willThrow(mockException);
+
+        // Act
+        MockHttpServletResponse response = mvc.perform(
+                get("/data/"+a9a.getName()).accept(MediaType.MULTIPART_FORM_DATA_VALUE))
+                .andReturn().getResponse();
+
+        // Assert
+        assertAll("response",
+                () -> assertEquals(HttpStatus.I_AM_A_TEAPOT.value(), response.getStatus()),
+                () -> assertEquals(Constant.EMPTY_STRING, response.getContentAsString()),
+                () -> assertEquals(MOCK_EXCEPTION_ERROR_MESSAGE, response.getHeader(MessageResponseEntity.HTTP_HEADER_STATUS_MESSAGE))
+        );
+    }
+
     // =====================================================================
     // createDataByName
     // =====================================================================
@@ -151,6 +179,25 @@ public class DataControllerTest extends ControllerTest {
         assertAll(
                 () -> assertEquals(response.getStatus(), HttpStatus.OK.value()),
                 () -> then(dataService).should(times(1)).createData(a9a)
+        );
+    }
+
+    @Test
+    public void createData_givenServiceException_thenReturnProperResponseEntity() throws Exception {
+        // Arrange
+        MockMultipartFile multipartFile = new MockMultipartFile("blob", a9a.getDataBytes());
+        given(dataService.createData(a9a)).willThrow(mockException);
+
+        // Act
+        MockHttpServletResponse response = mvc.perform(
+                multipart("/data/"+a9a.getName()).file(multipartFile))
+                .andReturn().getResponse();
+
+        // Assert
+        assertAll("response",
+                () -> assertEquals(HttpStatus.I_AM_A_TEAPOT.value(), response.getStatus()),
+                () -> assertEquals(Constant.EMPTY_STRING, response.getContentAsString()),
+                () -> assertEquals(MOCK_EXCEPTION_ERROR_MESSAGE, response.getHeader(MessageResponseEntity.HTTP_HEADER_STATUS_MESSAGE))
         );
     }
 
@@ -176,6 +223,25 @@ public class DataControllerTest extends ControllerTest {
         );
     }
 
+    @Test
+    public void updateData_givenServiceException_thenReturnProperResponseEntity() throws Exception {
+        // Arrange
+        MockMultipartFile multipartFile = new MockMultipartFile("blob", a9a.getDataBytes());
+        given(dataService.updateData(a9a)).willThrow(mockException);
+
+        // Act
+        MockHttpServletResponse response = mvc.perform(
+                putMultipart("/data/"+a9a.getName()).file(multipartFile))
+                .andReturn().getResponse();
+
+        // Assert
+        assertAll("response",
+                () -> assertEquals(HttpStatus.I_AM_A_TEAPOT.value(), response.getStatus()),
+                () -> assertEquals(Constant.EMPTY_STRING, response.getContentAsString()),
+                () -> assertEquals(MOCK_EXCEPTION_ERROR_MESSAGE, response.getHeader(MessageResponseEntity.HTTP_HEADER_STATUS_MESSAGE))
+        );
+    }
+
     // =====================================================================
     // deleteDataByName
     // =====================================================================
@@ -194,6 +260,24 @@ public class DataControllerTest extends ControllerTest {
         assertAll("response",
                 () -> assertEquals(response.getStatus(), HttpStatus.OK.value()),
                 () -> then(dataService).should(times(1)).deleteDataByName(a9a.getName())
+        );
+    }
+
+    @Test
+    public void deleteDataByName_givenServiceException_thenReturnProperResponseEntity() throws Exception {
+        // Arrange
+        doThrow(mockException).when(dataService).deleteDataByName(a9a.getName());
+
+        // Act
+        MockHttpServletResponse response = mvc.perform(
+                delete("/data/"+a9a.getName()))
+                .andReturn().getResponse();
+
+        // Assert
+        assertAll("response",
+                () -> assertEquals(HttpStatus.I_AM_A_TEAPOT.value(), response.getStatus()),
+                () -> assertEquals(Constant.EMPTY_STRING, response.getContentAsString()),
+                () -> assertEquals(MOCK_EXCEPTION_ERROR_MESSAGE, response.getHeader(MessageResponseEntity.HTTP_HEADER_STATUS_MESSAGE))
         );
     }
 }

@@ -1,7 +1,7 @@
 package io.hychou.libsvm.train.controller;
 
 import io.hychou.common.MessageResponseEntity;
-import io.hychou.common.exception.ServiceException;
+import io.hychou.common.exception.service.ServiceException;
 import io.hychou.data.entity.DataEntity;
 import io.hychou.data.service.DataService;
 import io.hychou.libsvm.model.entity.ModelEntity;

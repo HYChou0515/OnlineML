@@ -1,6 +1,6 @@
 package io.hychou.common.aspect;
 
-import io.hychou.common.exception.ServiceException;
+import io.hychou.common.exception.service.ServiceException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

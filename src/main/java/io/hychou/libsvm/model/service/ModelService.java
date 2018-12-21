@@ -1,6 +1,6 @@
 package io.hychou.libsvm.model.service;
 
-import io.hychou.common.exception.ServiceException;
+import io.hychou.common.exception.service.ServiceException;
 import io.hychou.libsvm.model.entity.ModelEntity;
 
 public interface ModelService {

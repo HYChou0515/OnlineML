@@ -3,7 +3,7 @@ package io.hychou.libsvm.model.controller;
 import com.google.common.net.HttpHeaders;
 import io.hychou.common.ControllerTest;
 import io.hychou.common.MessageResponseEntity;
-import io.hychou.common.exception.ServiceException;
+import io.hychou.common.exception.service.ServiceException;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.model.service.ModelService;
 import io.hychou.common.Constant;

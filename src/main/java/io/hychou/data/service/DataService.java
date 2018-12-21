@@ -1,6 +1,6 @@
 package io.hychou.data.service;
 
-import io.hychou.common.exception.ServiceException;
+import io.hychou.common.exception.service.ServiceException;
 import io.hychou.data.entity.DataEntity;
 import io.hychou.data.entity.DataInfo;
 

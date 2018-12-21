@@ -1,10 +1,11 @@
 package io.hychou.libsvm.train.service.impl;
 
-import io.hychou.common.exception.ServiceException;
-import io.hychou.common.exception.clienterror.IllegalParameterException;
-import io.hychou.common.exception.servererror.FileSystemReadException;
-import io.hychou.common.exception.servererror.FileSystemWriteException;
+import io.hychou.common.exception.service.ServiceException;
+import io.hychou.common.exception.service.clienterror.IllegalParameterException;
+import io.hychou.common.exception.service.servererror.FileSystemReadException;
+import io.hychou.common.exception.service.servererror.FileSystemWriteException;
 import io.hychou.data.entity.DataEntity;
+import io.hychou.data.util.DataUtils;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.parameter.LibsvmParameterEntity;
 import io.hychou.libsvm.train.service.TrainService;
@@ -42,8 +43,7 @@ public class TrainServiceImpl implements TrainService {
         svm_problem prob;
         try {
             prob = readProblemAndAdjustParameter(dataEntity, param);
-        } catch (IOException | NumberFormatException e) {
-            // TODO: data format exception should be checked in DataService, not here
+        } catch (IOException e) {
             throw new IllegalParameterException("Data format not correct", e);
         }
         // Check svm settings: problem and parameter
@@ -102,19 +102,6 @@ public class TrainServiceImpl implements TrainService {
         throw new IOException("File name collision over " + COLLISION_MAX + " times");
     }
 
-    private static double atof(String s) {
-        double d = Double.parseDouble(s);
-        if (Double.isNaN(d) || Double.isInfinite(d))
-        {
-            throw new NumberFormatException("NaN or Infinity in input");
-        }
-        return(d);
-    }
-
-    private static int atoi(String s) {
-        return Integer.parseInt(s);
-    }
-
     private static svm_problem readProblemAndAdjustParameter(DataEntity dataEntity, svm_parameter param) throws IOException {
         InputStream inputStream = new ByteArrayInputStream(dataEntity.getDataBytes());
         BufferedReader fp = new BufferedReader(new InputStreamReader(inputStream));
@@ -129,14 +116,14 @@ public class TrainServiceImpl implements TrainService {
 
             StringTokenizer st = new StringTokenizer(line," \t\n\r\f:");
 
-            vy.addElement(atof(st.nextToken()));
+            vy.addElement(DataUtils.atof(st.nextToken()));
             int m = st.countTokens()/2;
             svm_node[] x = new svm_node[m];
             for(int j=0;j<m;j++)
             {
                 x[j] = new svm_node();
-                x[j].index = atoi(st.nextToken());
-                x[j].value = atof(st.nextToken());
+                x[j].index = DataUtils.atoi(st.nextToken());
+                x[j].value = DataUtils.atof(st.nextToken());
             }
             if(m>0) max_index = Math.max(max_index, x[m-1].index);
             vx.addElement(x);

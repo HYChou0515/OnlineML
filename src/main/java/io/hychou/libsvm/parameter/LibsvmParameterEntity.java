@@ -130,9 +130,11 @@ public class LibsvmParameterEntity extends AbstractDataStructure {
     }
 
     public svm_parameter toSvmParameter(svm_parameter defaultParam) {
-        svm_parameter param = (svm_parameter) defaultParam.clone();
-        if(Objects.isNull(param)){
+        svm_parameter param;
+        if(Objects.isNull(defaultParam)){
             param = new svm_parameter();
+        } else {
+            param = (svm_parameter) defaultParam.clone();
         }
         final int TRUE = 1;
         final int FALSE = 0;

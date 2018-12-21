@@ -1,17 +1,20 @@
 package io.hychou.libsvm.parameter;
 
 import io.hychou.common.DataStructureTest;
+import libsvm.svm_parameter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
 public class LibsvmParameterEntityTest extends DataStructureTest {
 
     private LibsvmParameterEntity entity;
+    private svm_parameter defaultParam;
     private String entityToString = "LibsvmParameterEntity{svmType=C_SVC, kernelType=LINEAR, degree=1, gamma=2.0, coef0=3.0, cacheSize=4.0, eps=5.0, c=6.0, nu=7.0, p=8.0, shrinking=true, probability=false}";
 
     @Before
@@ -30,6 +33,20 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
         entity.setP(8.0);
         entity.setShrinking(true);
         entity.setProbability(false);
+
+        defaultParam = new svm_parameter();
+        defaultParam.svm_type = 0;
+        defaultParam.kernel_type = 0;
+        defaultParam.degree = 1;
+        defaultParam.gamma = 2.0;
+        defaultParam.coef0 = 3.0;
+        defaultParam.cache_size = 4.0;
+        defaultParam.eps = 5.0;
+        defaultParam.C = 6.0;
+        defaultParam.nu = 7.0;
+        defaultParam.p = 8.0;
+        defaultParam.shrinking = 1;
+        defaultParam.probability = 0;
     }
 
     @Test
@@ -133,5 +150,131 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
     public void toString_thenCorrectStringShouldBeFound() {
         String found = entity.toString();
         assertEquals(entityToString, found, "toString");
+    }
+
+    @Test
+    public void toSvmParameter_givenNullDafualtParameter_thenReturnCorrectSvmParameter() {
+        // arrange
+        svm_parameter expected = new svm_parameter();
+        expected.svm_type = 0;
+        expected.kernel_type = 0;
+        expected.degree = 1;
+        expected.gamma = 2.0;
+        expected.coef0 = 3.0;
+        expected.cache_size = 4.0;
+        expected.eps = 5.0;
+        expected.C = 6.0;
+        expected.nu = 7.0;
+        expected.p = 8.0;
+        expected.shrinking = 1;
+        expected.probability = 0;
+        // apply
+        svm_parameter actual = entity.toSvmParameter(null);
+        // assert
+        assertAll(
+                () -> assertEquals(expected.svm_type, actual.svm_type),
+                () -> assertEquals(expected.kernel_type, actual.kernel_type),
+                () -> assertEquals(expected.degree, actual.degree),
+                () -> assertEquals(expected.gamma, actual.gamma),
+                () -> assertEquals(expected.coef0, actual.coef0),
+                () -> assertEquals(expected.cache_size, actual.cache_size),
+                () -> assertEquals(expected.eps, actual.eps),
+                () -> assertEquals(expected.C, actual.C),
+                () -> assertEquals(expected.nu, actual.nu),
+                () -> assertEquals(expected.p, actual.p),
+                () -> assertEquals(expected.shrinking, actual.shrinking),
+                () -> assertEquals(expected.probability, actual.probability)
+        );
+    }
+
+    @Test
+    public void toSvmParameter_givenDefaultParameter_thenReturnCorrectSvmParameter() {
+        // arrange
+        LibsvmParameterEntity param = LibsvmParameterEntity.build()
+                .svmType(SvmTypeEnum.ONE_CLASS).c(3.2)
+                .probability(false).shrinking(false).done();
+        svm_parameter expected = (svm_parameter) defaultParam.clone();
+        expected.svm_type = 2;
+        expected.C = 3.2;
+        expected.shrinking = 0;
+        expected.probability = 0;
+        // apply
+        svm_parameter actual = param.toSvmParameter(defaultParam);
+        // assert
+        assertAll(
+                () -> assertEquals(expected.svm_type, actual.svm_type),
+                () -> assertEquals(expected.kernel_type, actual.kernel_type),
+                () -> assertEquals(expected.degree, actual.degree),
+                () -> assertEquals(expected.gamma, actual.gamma),
+                () -> assertEquals(expected.coef0, actual.coef0),
+                () -> assertEquals(expected.cache_size, actual.cache_size),
+                () -> assertEquals(expected.eps, actual.eps),
+                () -> assertEquals(expected.C, actual.C),
+                () -> assertEquals(expected.nu, actual.nu),
+                () -> assertEquals(expected.p, actual.p),
+                () -> assertEquals(expected.shrinking, actual.shrinking),
+                () -> assertEquals(expected.probability, actual.probability)
+        );
+    }
+
+    @Test
+    public void toSvmParameter_givenDefaultParameter2_thenReturnCorrectSvmParameter() {
+        // arrange
+        LibsvmParameterEntity param = LibsvmParameterEntity.build()
+                .kernelType(KernelTypeEnum.RBF)
+                .degree(3).gamma(4.0).coef0(5.0).cacheSize(6.0)
+                .eps(7.0).nu(9.0).p(10.0).done();
+        svm_parameter expected = (svm_parameter) defaultParam.clone();
+        expected.kernel_type = 2;
+        expected.degree = 3;
+        expected.gamma = 4.0;
+        expected.coef0 = 5.0;
+        expected.cache_size = 6.0;
+        expected.eps = 7.0;
+        expected.nu = 9.0;
+        expected.p = 10.0;
+        // apply
+        svm_parameter actual = param.toSvmParameter(defaultParam);
+        // assert
+        assertAll(
+                () -> assertEquals(expected.svm_type, actual.svm_type),
+                () -> assertEquals(expected.kernel_type, actual.kernel_type),
+                () -> assertEquals(expected.degree, actual.degree),
+                () -> assertEquals(expected.gamma, actual.gamma),
+                () -> assertEquals(expected.coef0, actual.coef0),
+                () -> assertEquals(expected.cache_size, actual.cache_size),
+                () -> assertEquals(expected.eps, actual.eps),
+                () -> assertEquals(expected.C, actual.C),
+                () -> assertEquals(expected.nu, actual.nu),
+                () -> assertEquals(expected.p, actual.p),
+                () -> assertEquals(expected.shrinking, actual.shrinking),
+                () -> assertEquals(expected.probability, actual.probability)
+        );
+    }
+
+    @Test
+    public void toSvmParameter_givenDefaultParameter3_thenReturnCorrectSvmParameter() {
+        // arrange
+        LibsvmParameterEntity param = LibsvmParameterEntity.build()
+                .probability(true).done();
+        svm_parameter expected = (svm_parameter) defaultParam.clone();
+        expected.probability = 1;
+        // apply
+        svm_parameter actual = param.toSvmParameter(defaultParam);
+        // assert
+        assertAll(
+                () -> assertEquals(expected.svm_type, actual.svm_type),
+                () -> assertEquals(expected.kernel_type, actual.kernel_type),
+                () -> assertEquals(expected.degree, actual.degree),
+                () -> assertEquals(expected.gamma, actual.gamma),
+                () -> assertEquals(expected.coef0, actual.coef0),
+                () -> assertEquals(expected.cache_size, actual.cache_size),
+                () -> assertEquals(expected.eps, actual.eps),
+                () -> assertEquals(expected.C, actual.C),
+                () -> assertEquals(expected.nu, actual.nu),
+                () -> assertEquals(expected.p, actual.p),
+                () -> assertEquals(expected.shrinking, actual.shrinking),
+                () -> assertEquals(expected.probability, actual.probability)
+        );
     }
 }

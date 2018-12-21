@@ -2,6 +2,7 @@ package io.hychou.libsvm.train.controller;
 
 import io.hychou.common.exception.ServiceException;
 import io.hychou.data.entity.DataEntity;
+import io.hychou.data.service.DataService;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.model.service.ModelService;
 import io.hychou.libsvm.parameter.KernelTypeEnum;
@@ -36,9 +37,10 @@ public class TrainControllerTest {
 
     @MockBean
     private TrainService trainService;
-    
     @MockBean
     private ModelService modelService;
+    @MockBean
+    private DataService dataService;
 
     private DataEntity a9a;
     private ModelEntity a9aModel;
@@ -88,7 +90,8 @@ public class TrainControllerTest {
     @Test
     public void svmTrain_theReturnProperResponseEntity() throws Exception {
         // Arrange
-        given(trainService.svmTrain(a9a.getName(), libsvmParameterEntity)).willReturn(a9aModelNoId);
+        given(dataService.readDataByName(a9a.getName())).willReturn(a9a);
+        given(trainService.svmTrain(a9a, libsvmParameterEntity)).willReturn(a9aModelNoId);
         given(modelService.createModel(a9aModelNoId)).willReturn(a9aModel);
 
         // Act

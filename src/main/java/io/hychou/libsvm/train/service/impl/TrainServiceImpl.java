@@ -5,73 +5,105 @@ import io.hychou.common.exception.clienterror.IllegalParameterException;
 import io.hychou.common.exception.servererror.FileSystemReadException;
 import io.hychou.common.exception.servererror.FileSystemWriteException;
 import io.hychou.data.entity.DataEntity;
-import io.hychou.data.service.DataService;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.parameter.LibsvmParameterEntity;
 import io.hychou.libsvm.train.service.TrainService;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import libsvm.*;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-@PropertySource("classpath:application.properties")
 @Service
 public class TrainServiceImpl implements TrainService {
 
-    @Value("${filesystem.path.tmp}")
-    private String SERVICE_TMP_DIR;
-
-    private final DataService dataService;
+    private final String serviceTmpDir;
+    private static final long COLLISION_MAX = 50L;
+    private static final String MODEL_EXTENSION = ".model";
+    private static final svm_parameter DEFAULT_PARAMETER = getDefaultParameter();
 
     @Autowired
-    public TrainServiceImpl(DataService dataService) {
-        this.dataService = dataService;
+    public TrainServiceImpl(@Value("${filesystem.path.tmp}") String serviceTmpDir) {
+        this.serviceTmpDir = serviceTmpDir;
     }
 
     @Override
-    public ModelEntity svmTrain(String dataName, LibsvmParameterEntity libsvmParameterEntity) throws ServiceException {
-        svm_parameter param = libsvmParameterEntity.toSvmParameter(defaultParameter());
+    public ModelEntity svmTrain(DataEntity dataEntity, LibsvmParameterEntity libsvmParameterEntity) throws ServiceException {
+        // Prepare svm parameter
+        svm_parameter param = libsvmParameterEntity.toSvmParameter(DEFAULT_PARAMETER);
+        // Prepare svm problem
         svm_problem prob;
         try {
-            prob = readProblemAndAdjustParameter(dataService.readDataByName(dataName), param);
+            prob = readProblemAndAdjustParameter(dataEntity, param);
         } catch (IOException | NumberFormatException e) {
             // TODO: data format exception should be checked in DataService, not here
             throw new IllegalParameterException("Data format not correct", e);
         }
+        // Check svm settings: problem and parameter
         String errorMessage = svm.svm_check_parameter(prob, param);
         if (Objects.nonNull(errorMessage)) {
             throw new IllegalParameterException("Parameter format not correct: " + errorMessage);
         }
+
+        // svm train
         svm_model model = svm.svm_train(prob, param);
-        String tmpFilePath = SERVICE_TMP_DIR + "123";
-        try {
-            svm.svm_save_model(tmpFilePath, model);
-        } catch (IOException e) {
-            throw new FileSystemWriteException("Cannot write model into path " + tmpFilePath, e);
-        }
 
-        byte[] modelBytes;
-        try {
-            modelBytes = Files.readAllBytes(new File(tmpFilePath).toPath());
-        } catch (IOException e) {
-            throw new FileSystemReadException("Cannot read model from path " + tmpFilePath, e);
-        }
+        // Prepare byte array of model
+        byte[] modelBytes = getModelByteArray(model);
 
+        // Prepare model entity
         ModelEntity modelEntity = new ModelEntity();
         modelEntity.setDataBytes(modelBytes);
         return modelEntity;
     }
 
+    private byte[] getModelByteArray(svm_model model) throws ServiceException {
+        String tmpFilePath;
+        try {
+            tmpFilePath= getUniqueFilePath(serviceTmpDir, model);
+        } catch (IOException e) {
+            throw new FileSystemWriteException("Model cannot be written", e);
+        }
+        try {
+            svm.svm_save_model(tmpFilePath, model);
+        } catch (IOException e) {
+            throw new FileSystemWriteException("Cannot write model into path: " + tmpFilePath, e);
+        }
+        try {
+            return Files.readAllBytes(new File(tmpFilePath).toPath());
+        } catch (IOException e) {
+            throw new FileSystemReadException("Cannot read model from path: " + tmpFilePath, e);
+        }
+    }
+
+    private static String getUniqueFilePath(String serviceTmpDir, svm_model model) throws IOException{
+        int trial = 0;
+        while(trial < COLLISION_MAX) {
+            trial++;
+            double randomSeed = Math.random();
+            int hash = Objects.hash(
+                    Arrays.hashCode(model.getClass().getDeclaredFields()),
+                    randomSeed
+            );
+            String sha256hex = DigestUtils.sha256Hex(String.valueOf(hash));
+            String tmpFilePath = serviceTmpDir + sha256hex + MODEL_EXTENSION;
+            File f = new File(tmpFilePath);
+            if(!f.exists()) {
+                return tmpFilePath;
+            }
+        }
+        throw new IOException("File name collision over " + COLLISION_MAX + " times");
+    }
 
     private static double atof(String s) {
-        double d = Double.valueOf(s);
+        double d = Double.parseDouble(s);
         if (Double.isNaN(d) || Double.isInfinite(d))
         {
             throw new NumberFormatException("NaN or Infinity in input");
@@ -126,7 +158,7 @@ public class TrainServiceImpl implements TrainService {
         return prob;
     }
 
-    private static svm_parameter defaultParameter() {
+    private static svm_parameter getDefaultParameter() {
         svm_parameter param = new svm_parameter();
         // default values
         param.svm_type = svm_parameter.C_SVC;

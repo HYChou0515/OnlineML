@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
+import static io.hychou.common.Constant.UNIX_LINE_SEPARATOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
@@ -39,13 +40,13 @@ public class TrainServiceTest {
     }
 
     @Test
-    public void svmTrain_returnCorrectModelEntity() throws Exception{
+    public void svmTrain_returnCorrectModelEntity() throws Exception {
         // Arrange
         File expectedModel = ResourceUtils.getFile("classpath:model/heart_scale_default_model");
         List<String> expected = Files.readAllLines(expectedModel.toPath());
         // Apply
         byte[] bytes = trainService.svmTrain(data, libsvmParameterEntity).getDataBytes();
-        List<String> actual = Arrays.asList((new String(bytes)).split(System.lineSeparator()));
+        List<String> actual = Arrays.asList((new String(bytes)).split(UNIX_LINE_SEPARATOR)); // libsvm uses "\n" for line separator
         // Assert
         assertEquals(expected, actual);
     }

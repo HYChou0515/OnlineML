@@ -6,4 +6,5 @@ public final class Constant {
     public final static String EMPTY_STRING = "";
 
     public final static String SUCCESS_MESSAGE = "Operation success";
+    public final static String UNIX_LINE_SEPARATOR = "\n";
 }

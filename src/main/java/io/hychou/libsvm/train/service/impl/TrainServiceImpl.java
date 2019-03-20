@@ -9,14 +9,15 @@ import io.hychou.data.util.DataUtils;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.parameter.LibsvmParameterEntity;
 import io.hychou.libsvm.train.service.TrainService;
+import libsvm.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import libsvm.*;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.StringTokenizer;
@@ -25,14 +26,13 @@ import java.util.Vector;
 @Service
 public class TrainServiceImpl implements TrainService {
 
-    private final String serviceTmpDir;
-    private static final long COLLISION_MAX = 50L;
+    private final long collisionMax;
     private static final String MODEL_EXTENSION = ".model";
     private static final svm_parameter DEFAULT_PARAMETER = getDefaultParameter();
 
     @Autowired
-    public TrainServiceImpl(@Value("${filesystem.path.tmp}") String serviceTmpDir) {
-        this.serviceTmpDir = serviceTmpDir;
+    public TrainServiceImpl(@Value("#{new Long('${filesystem.path.hash.collision}')}") long collisionMax) {
+        this.collisionMax = collisionMax;
     }
 
     @Override
@@ -67,7 +67,7 @@ public class TrainServiceImpl implements TrainService {
     private byte[] getModelByteArray(svm_model model) throws ServiceException {
         String tmpFilePath;
         try {
-            tmpFilePath= getUniqueFilePath(serviceTmpDir, model);
+            tmpFilePath= getUniqueModelFilePath(System.getProperty("java.io.tmpdir"), model, this.collisionMax);
         } catch (IOException e) {
             throw new FileSystemWriteException("Model cannot be written", e);
         }
@@ -83,23 +83,22 @@ public class TrainServiceImpl implements TrainService {
         }
     }
 
-    private static String getUniqueFilePath(String serviceTmpDir, svm_model model) throws IOException{
+    private static String getUniqueModelFilePath(String serviceTmpDir, svm_model model, long collisionMax) throws IOException{
         int trial = 0;
-        while(trial < COLLISION_MAX) {
-            trial++;
+        while(trial++ < collisionMax) {
             double randomSeed = Math.random();
             int hash = Objects.hash(
                     Arrays.hashCode(model.getClass().getDeclaredFields()),
                     randomSeed
             );
             String sha256hex = DigestUtils.sha256Hex(String.valueOf(hash));
-            String tmpFilePath = serviceTmpDir + sha256hex + MODEL_EXTENSION;
+            String tmpFilePath = Paths.get(serviceTmpDir, sha256hex + MODEL_EXTENSION).toString();
             File f = new File(tmpFilePath);
             if(!f.exists()) {
                 return tmpFilePath;
             }
         }
-        throw new IOException("File name collision over " + COLLISION_MAX + " times");
+        throw new IOException("File name collision over " + collisionMax + " times");
     }
 
     private static svm_problem readProblemAndAdjustParameter(DataEntity dataEntity, svm_parameter param) throws IOException {

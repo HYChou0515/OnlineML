@@ -19,16 +19,16 @@ public class ModelServiceImpl implements ModelService {
     }
 
     private static String modelWithIdDoesNotExist(Long id) {
-           return "Model with id="+id+" does not exist";
+        return "Model with id=" + id + " does not exist";
     }
 
     @Override
     public ModelEntity readModelById(Long id) throws ServiceException {
-        if(id == null) {
+        if (id == null) {
             throw new NullParameterException("Trying to query with null id");
         }
         Optional<ModelEntity> modelEntity = modelEntityRepository.findById(id);
-        if(modelEntity.isPresent()) {
+        if (modelEntity.isPresent()) {
             return modelEntity.get();
         } else {
             throw new ElementNotExistException(modelWithIdDoesNotExist(id));
@@ -49,7 +49,7 @@ public class ModelServiceImpl implements ModelService {
         if (modelEntity == null || modelEntity.getId() == null || modelEntity.getDataBytes() == null) {
             throw new NullParameterException("Trying to update null model");
         }
-        if( ! modelEntityRepository.existsById(modelEntity.getId())) {
+        if (!modelEntityRepository.existsById(modelEntity.getId())) {
             throw new ElementNotExistException(modelWithIdDoesNotExist(modelEntity.getId()));
         }
         modelEntity = modelEntityRepository.save(modelEntity);
@@ -58,10 +58,10 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public void deleteModelById(Long id) throws ServiceException {
-        if(id == null) {
+        if (id == null) {
             throw new NullParameterException("Trying to delete model with null id");
         }
-        if( ! modelEntityRepository.existsById(id)) {
+        if (!modelEntityRepository.existsById(id)) {
             throw new ElementNotExistException(modelWithIdDoesNotExist(id));
         }
         modelEntityRepository.deleteById(id);

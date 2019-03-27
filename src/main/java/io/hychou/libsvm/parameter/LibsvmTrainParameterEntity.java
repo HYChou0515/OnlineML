@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class LibsvmParameterEntity extends AbstractDataStructure {
+public class LibsvmTrainParameterEntity extends AbstractDataStructure {
 
     private SvmTypeEnum svmType;
     private KernelTypeEnum kernelType;
@@ -45,87 +45,87 @@ public class LibsvmParameterEntity extends AbstractDataStructure {
         ParameterBuilder p(Double p);
         ParameterBuilder shrinking(Boolean shrinking);
         ParameterBuilder probability(Boolean probability);
-        LibsvmParameterEntity done();
+        LibsvmTrainParameterEntity done();
     }
 
     private static class DefaultBuilder implements ParameterBuilder {
-        private LibsvmParameterEntity libsvmParameterEntity = new LibsvmParameterEntity();
+        private LibsvmTrainParameterEntity libsvmTrainParameterEntity = new LibsvmTrainParameterEntity();
 
         @Override
         public ParameterBuilder svmType(SvmTypeEnum svmType) {
-            libsvmParameterEntity.setSvmType(svmType);
+            libsvmTrainParameterEntity.setSvmType(svmType);
             return this;
         }
 
         @Override
         public ParameterBuilder kernelType(KernelTypeEnum kernelType) {
-            libsvmParameterEntity.setKernelType(kernelType);
+            libsvmTrainParameterEntity.setKernelType(kernelType);
             return this;
         }
 
         @Override
         public ParameterBuilder degree(Integer degree) {
-            libsvmParameterEntity.setDegree(degree);
+            libsvmTrainParameterEntity.setDegree(degree);
             return this;
         }
 
         @Override
         public ParameterBuilder gamma(Double gamma) {
-            libsvmParameterEntity.setGamma(gamma);
+            libsvmTrainParameterEntity.setGamma(gamma);
             return this;
         }
 
         @Override
         public ParameterBuilder coef0(Double coef0) {
-            libsvmParameterEntity.setCoef0(coef0);
+            libsvmTrainParameterEntity.setCoef0(coef0);
             return this;
         }
 
         @Override
         public ParameterBuilder cacheSize(Double cacheSize) {
-            libsvmParameterEntity.setCacheSize(cacheSize);
+            libsvmTrainParameterEntity.setCacheSize(cacheSize);
             return this;
         }
 
         @Override
         public ParameterBuilder eps(Double eps) {
-            libsvmParameterEntity.setEps(eps);
+            libsvmTrainParameterEntity.setEps(eps);
             return this;
         }
 
         @Override
         public ParameterBuilder c(Double c) {
-            libsvmParameterEntity.setC(c);
+            libsvmTrainParameterEntity.setC(c);
             return this;
         }
 
         @Override
         public ParameterBuilder nu(Double nu) {
-            libsvmParameterEntity.setNu(nu);
+            libsvmTrainParameterEntity.setNu(nu);
             return this;
         }
 
         @Override
         public ParameterBuilder p(Double p) {
-            libsvmParameterEntity.setP(p);
+            libsvmTrainParameterEntity.setP(p);
             return this;
         }
 
         @Override
         public ParameterBuilder shrinking(Boolean shrinking) {
-            libsvmParameterEntity.setShrinking(shrinking);
+            libsvmTrainParameterEntity.setShrinking(shrinking);
             return this;
         }
 
         @Override
         public ParameterBuilder probability(Boolean probability) {
-            libsvmParameterEntity.setProbability(probability);
+            libsvmTrainParameterEntity.setProbability(probability);
             return this;
         }
 
         @Override
-        public LibsvmParameterEntity done() {
-            return this.libsvmParameterEntity;
+        public LibsvmTrainParameterEntity done() {
+            return this.libsvmTrainParameterEntity;
         }
     }
 

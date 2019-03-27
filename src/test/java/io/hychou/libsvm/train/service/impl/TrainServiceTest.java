@@ -1,7 +1,7 @@
 package io.hychou.libsvm.train.service.impl;
 
 import io.hychou.data.entity.DataEntity;
-import io.hychou.libsvm.parameter.LibsvmParameterEntity;
+import io.hychou.libsvm.parameter.LibsvmTrainParameterEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,12 +25,12 @@ public class TrainServiceTest {
     @Autowired
     private TrainServiceImpl trainService;
 
-    private LibsvmParameterEntity libsvmParameterEntity;
+    private LibsvmTrainParameterEntity libsvmTrainParameterEntity;
     private DataEntity data;
 
     @Before
     public void setUp() throws Exception {
-        libsvmParameterEntity = new LibsvmParameterEntity();
+        libsvmTrainParameterEntity = new LibsvmTrainParameterEntity();
 
         File heartScale = ResourceUtils.getFile("classpath:data/heart_scale");
 
@@ -45,7 +45,7 @@ public class TrainServiceTest {
         File expectedModel = ResourceUtils.getFile("classpath:model/heart_scale_default_model");
         List<String> expected = Files.readAllLines(expectedModel.toPath());
         // Apply
-        byte[] bytes = trainService.svmTrain(data, libsvmParameterEntity).getDataBytes();
+        byte[] bytes = trainService.svmTrain(data, libsvmTrainParameterEntity).getDataBytes();
         List<String> actual = Arrays.asList((new String(bytes)).split(UNIX_LINE_SEPARATOR)); // libsvm uses "\n" for line separator
         // Assert
         assertEquals(expected, actual);

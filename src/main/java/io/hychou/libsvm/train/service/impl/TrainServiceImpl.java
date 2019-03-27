@@ -7,7 +7,7 @@ import io.hychou.common.exception.service.servererror.FileSystemWriteException;
 import io.hychou.data.entity.DataEntity;
 import io.hychou.data.util.DataUtils;
 import io.hychou.libsvm.model.entity.ModelEntity;
-import io.hychou.libsvm.parameter.LibsvmParameterEntity;
+import io.hychou.libsvm.parameter.LibsvmTrainParameterEntity;
 import io.hychou.libsvm.train.service.TrainService;
 import libsvm.*;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -36,9 +36,9 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public ModelEntity svmTrain(DataEntity dataEntity, LibsvmParameterEntity libsvmParameterEntity) throws ServiceException {
+    public ModelEntity svmTrain(DataEntity dataEntity, LibsvmTrainParameterEntity libsvmTrainParameterEntity) throws ServiceException {
         // Prepare svm parameter
-        svm_parameter param = libsvmParameterEntity.toSvmParameter(DEFAULT_PARAMETER);
+        svm_parameter param = libsvmTrainParameterEntity.toSvmParameter(DEFAULT_PARAMETER);
         // Prepare svm problem
         svm_problem prob;
         try {

@@ -7,7 +7,7 @@ import io.hychou.data.service.DataService;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.model.service.ModelService;
 import io.hychou.libsvm.parameter.KernelTypeEnum;
-import io.hychou.libsvm.parameter.LibsvmParameterEntity;
+import io.hychou.libsvm.parameter.LibsvmTrainParameterEntity;
 import io.hychou.libsvm.parameter.SvmTypeEnum;
 import io.hychou.libsvm.train.service.TrainService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +48,13 @@ public class TrainController {
             @RequestParam(value = "shrinking", required=false) Boolean shrinking,
             @RequestParam(value = "probability", required=false) Boolean probability
     ) {
-        LibsvmParameterEntity libsvmParameterEntity = LibsvmParameterEntity.build()
+        LibsvmTrainParameterEntity libsvmTrainParameterEntity = LibsvmTrainParameterEntity.build()
                 .svmType(svmType).kernelType(kernelType).degree(degree)
                 .gamma(gamma).coef0(coef0).cacheSize(cacheSize)
                 .eps(eps).c(c).nu(nu).p(p).shrinking(shrinking).probability(probability).done();
         try {
             DataEntity dataEntity = dataService.readDataByName(dataName);
-            ModelEntity modelEntity = trainService.svmTrain(dataEntity, libsvmParameterEntity);
+            ModelEntity modelEntity = trainService.svmTrain(dataEntity, libsvmTrainParameterEntity);
             modelEntity = modelService.createModel(modelEntity);
             return MessageResponseEntity.ok(modelEntity.getId(), SUCCESS_MESSAGE);
         } catch (ServiceException e) {

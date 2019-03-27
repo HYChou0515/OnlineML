@@ -6,7 +6,7 @@ import io.hychou.data.service.DataService;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.model.service.ModelService;
 import io.hychou.libsvm.parameter.KernelTypeEnum;
-import io.hychou.libsvm.parameter.LibsvmParameterEntity;
+import io.hychou.libsvm.parameter.LibsvmTrainParameterEntity;
 import io.hychou.libsvm.parameter.SvmTypeEnum;
 import io.hychou.libsvm.train.service.TrainService;
 import org.junit.Before;
@@ -45,7 +45,7 @@ public class TrainControllerTest {
     private DataEntity a9a;
     private ModelEntity a9aModel;
     private ModelEntity a9aModelNoId;
-    private LibsvmParameterEntity libsvmParameterEntity;
+    private LibsvmTrainParameterEntity libsvmTrainParameterEntity;
 
     private static final String MOCK_EXCEPTION_ERROR_MESSAGE = "This is a mock exception";
     private ServiceException mockException = new ServiceException(MOCK_EXCEPTION_ERROR_MESSAGE) {
@@ -68,7 +68,7 @@ public class TrainControllerTest {
         a9aModelNoId.setId(null);
         a9aModelNoId.setDataBytes("This is a9a model".getBytes());
 
-        libsvmParameterEntity = LibsvmParameterEntity.build()
+        libsvmTrainParameterEntity = LibsvmTrainParameterEntity.build()
                 .svmType(SvmTypeEnum.C_SVC)
                 .kernelType(KernelTypeEnum.RBF)
                 .degree(1)
@@ -91,13 +91,13 @@ public class TrainControllerTest {
     public void svmTrain_theReturnProperResponseEntity() throws Exception {
         // Arrange
         given(dataService.readDataByName(a9a.getName())).willReturn(a9a);
-        given(trainService.svmTrain(a9a, libsvmParameterEntity)).willReturn(a9aModelNoId);
+        given(trainService.svmTrain(a9a, libsvmTrainParameterEntity)).willReturn(a9aModelNoId);
         given(modelService.createModel(a9aModelNoId)).willReturn(a9aModel);
 
         // Act
-        svmTrainUrl(a9a.getName(), libsvmParameterEntity);
+        svmTrainUrl(a9a.getName(), libsvmTrainParameterEntity);
         MockHttpServletResponse response = mvc.perform(
-                get(svmTrainUrl(a9a.getName(), libsvmParameterEntity))
+                get(svmTrainUrl(a9a.getName(), libsvmTrainParameterEntity))
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -106,35 +106,35 @@ public class TrainControllerTest {
 
     }
 
-    private String svmTrainUrl(String dataName, LibsvmParameterEntity libsvmParameterEntity) {
+    private String svmTrainUrl(String dataName, LibsvmTrainParameterEntity libsvmTrainParameterEntity) {
         StringBuilder sb = new StringBuilder("/train/");
         sb.append(dataName);
         sb.append("?");
         StringJoiner requestParams = new StringJoiner("&");
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("svmType="+libsvmParameterEntity.getSvmType());
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("kernelType="+libsvmParameterEntity.getKernelType());
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("degree="+libsvmParameterEntity.getDegree());
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("gamma="+libsvmParameterEntity.getGamma());
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("coef0="+libsvmParameterEntity.getCoef0());
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("cacheSize="+libsvmParameterEntity.getCacheSize());
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("eps="+libsvmParameterEntity.getEps());
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("c="+libsvmParameterEntity.getC());
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("nu="+libsvmParameterEntity.getNu());
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("p="+libsvmParameterEntity.getP());
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("shrinking="+libsvmParameterEntity.getShrinking());
-        if(Objects.nonNull(libsvmParameterEntity.getSvmType()))
-            requestParams.add("probability="+libsvmParameterEntity.getProbability());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("svmType="+ libsvmTrainParameterEntity.getSvmType());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("kernelType="+ libsvmTrainParameterEntity.getKernelType());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("degree="+ libsvmTrainParameterEntity.getDegree());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("gamma="+ libsvmTrainParameterEntity.getGamma());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("coef0="+ libsvmTrainParameterEntity.getCoef0());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("cacheSize="+ libsvmTrainParameterEntity.getCacheSize());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("eps="+ libsvmTrainParameterEntity.getEps());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("c="+ libsvmTrainParameterEntity.getC());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("nu="+ libsvmTrainParameterEntity.getNu());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("p="+ libsvmTrainParameterEntity.getP());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("shrinking="+ libsvmTrainParameterEntity.getShrinking());
+        if(Objects.nonNull(libsvmTrainParameterEntity.getSvmType()))
+            requestParams.add("probability="+ libsvmTrainParameterEntity.getProbability());
         sb.append(requestParams.toString());
         return sb.toString();
     }

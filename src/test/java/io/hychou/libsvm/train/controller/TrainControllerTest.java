@@ -95,7 +95,6 @@ public class TrainControllerTest {
         given(modelService.createModel(a9aModelNoId)).willReturn(a9aModel);
 
         // Act
-        svmTrainUrl(a9a.getName(), libsvmTrainParameterEntity);
         MockHttpServletResponse response = mvc.perform(
                 get(svmTrainUrl(a9a.getName(), libsvmTrainParameterEntity))
                         .accept(MediaType.APPLICATION_JSON))
@@ -103,7 +102,6 @@ public class TrainControllerTest {
 
         // Arrange
         assertEquals(response.getContentAsString(), a9aModel.getId().toString());
-
     }
 
     private String svmTrainUrl(String dataName, LibsvmTrainParameterEntity libsvmTrainParameterEntity) {

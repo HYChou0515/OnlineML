@@ -23,6 +23,8 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import static io.hychou.common.Constant.LIBSVM_DELIMITERS;
+
 @Service
 public class TrainServiceImpl implements TrainService {
 
@@ -113,7 +115,7 @@ public class TrainServiceImpl implements TrainService {
             String line = fp.readLine();
             if(line == null) break;
 
-            StringTokenizer st = new StringTokenizer(line," \t\n\r\f:");
+            StringTokenizer st = new StringTokenizer(line,LIBSVM_DELIMITERS);
 
             vy.addElement(DataUtils.atof(st.nextToken()));
             int m = st.countTokens()/2;

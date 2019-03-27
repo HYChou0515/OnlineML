@@ -1,5 +1,6 @@
 package io.hychou.data.util;
 
+import com.google.common.math.DoubleMath;
 import io.hychou.common.exception.IllegalArgumentException;
 
 import java.io.BufferedReader;
@@ -10,6 +11,28 @@ import java.util.StringJoiner;
 
 public class DataUtils {
     private DataUtils() {
+    }
+
+    /**
+     * If a and b are numeric strings, return positive if a>b, negative
+     * if a<b, 0 if a=b. If a or b is not numeric, return a.compareTo(b).
+     */
+    public static int libsvmTokenCompare(String a, String b, double tolerance) {
+        try {
+            double da = Double.parseDouble(a);
+            double db = Double.parseDouble(b);
+            return DoubleMath.fuzzyCompare(da, db, tolerance);
+        } catch(NumberFormatException e) {
+            return a.compareTo(b);
+        }
+    }
+
+    /**
+     * If a and b are numeric strings, return positive if a>b, negative
+     * if a<b, 0 if a=b. If a or b is not numeric, return a.compareTo(b).
+     */
+    public static int libsvmTokenCompare(String a, String b) {
+        return libsvmTokenCompare(a, b, 0);
     }
 
     public static int atoi(String s) {

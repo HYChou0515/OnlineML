@@ -7,4 +7,5 @@ public final class Constant {
 
     public final static String SUCCESS_MESSAGE = "Operation success";
     public final static String UNIX_LINE_SEPARATOR = "\n";
+    public final static String LIBSVM_DELIMITERS = " |\t|\n|\r\n|\f|:";
 }

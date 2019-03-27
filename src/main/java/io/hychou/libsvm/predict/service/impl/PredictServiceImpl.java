@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.StringTokenizer;
 
+import static io.hychou.common.Constant.LIBSVM_DELIMITERS;
 import static io.hychou.data.util.DataUtils.atof;
 import static io.hychou.data.util.DataUtils.atoi;
 import static libsvm.svm.svm_load_model;
@@ -108,7 +109,7 @@ public class PredictServiceImpl implements PredictService {
                 try {
                     output.writeBytes("labels");
                     for (int j = 0; j < nr_class; j++)
-                        output.writeBytes(" " + labels[j]);
+                        output.writeBytes(String.format(" %d", labels[j]));
                     output.writeBytes("\n");
                 } catch (IOException e) {
                     throw new ServerIOException(CANNOT_WRITE_TO_DATA_OUTPUT_STREAM);
@@ -125,7 +126,7 @@ public class PredictServiceImpl implements PredictService {
             }
             if(line == null) break;
 
-            StringTokenizer st = new StringTokenizer(line," \t\n\r\f:");
+            StringTokenizer st = new StringTokenizer(line,LIBSVM_DELIMITERS);
 
             double target = atof(st.nextToken());
             int m = st.countTokens()/2;
@@ -137,14 +138,14 @@ public class PredictServiceImpl implements PredictService {
                 x[j].value = atof(st.nextToken());
             }
 
-            double v;
+            double predict_label;
             if (predict_probability==1 && (svm_type==svm_parameter.C_SVC || svm_type==svm_parameter.NU_SVC))
             {
-                v = svm.svm_predict_probability(model,x,prob_estimates);
+                predict_label = svm.svm_predict_probability(model,x,prob_estimates);
                 try {
-                    output.writeBytes(v+" ");
+                    output.writeBytes(String.format("%g", predict_label));
                     for(int j=0;j<nr_class;j++)
-                        output.writeBytes(prob_estimates[j]+" ");
+                        output.writeBytes(String.format(" %g", prob_estimates[j]));
                     output.writeBytes("\n");
                 } catch (IOException e) {
                     throw new ServerIOException(CANNOT_WRITE_TO_DATA_OUTPUT_STREAM);
@@ -152,22 +153,22 @@ public class PredictServiceImpl implements PredictService {
             }
             else
             {
-                v = svm.svm_predict(model,x);
+                predict_label = svm.svm_predict(model,x);
                 try {
-                    output.writeBytes(v+"\n");
+                    output.writeBytes(String.format("%g\n", predict_label));
                 } catch (IOException e) {
                     throw new ServerIOException(CANNOT_WRITE_TO_DATA_OUTPUT_STREAM);
                 }
             }
 
-            if(v == target)
+            if(predict_label == target)
                 ++correct;
-            error += (v-target)*(v-target);
-            sumv += v;
+            error += (predict_label-target)*(predict_label-target);
+            sumv += predict_label;
             sumy += target;
-            sumvv += v*v;
+            sumvv += predict_label*predict_label;
             sumyy += target*target;
-            sumvy += v*target;
+            sumvy += predict_label*target;
             ++total;
         }
         if(svm_type == svm_parameter.EPSILON_SVR ||

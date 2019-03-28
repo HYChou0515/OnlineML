@@ -99,16 +99,40 @@ public class PredictControllerTest {
         assertEquals(response.getContentAsString(), a9aPrediction.getId().toString());
     }
 
+    @Test
+    public void svmTrain_givenNoLibsvmPredictParameterEntity_theReturnProperResponseEntity() throws Exception {
+        // Arrange
+        given(dataService.readDataByName(a9a.getName())).willReturn(a9a);
+        given(modelService.readModelById(a9aModel.getId())).willReturn(a9aModel);
+        given(predictService.svmPredict(a9a, a9aModel, libsvmPredictParameterEntity)).willReturn(a9aPredictionNoId);
+        given(predictionService.createPrediction(a9aPredictionNoId)).willReturn(a9aPrediction);
+
+        // Act
+        MockHttpServletResponse response = mvc.perform(
+                get(svmPredictUrl(a9a.getName(), a9aModel.getId()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        // Arrange
+        assertEquals(response.getContentAsString(), a9aPrediction.getId().toString());
+    }
+
     private String svmPredictUrl(String dataName, long modelId, LibsvmPredictParameterEntity libsvmPredictParameterEntity) {
         StringBuilder sb = new StringBuilder("/predict/");
         sb.append(dataName);
         sb.append("/");
         sb.append(modelId);
-        sb.append("?");
-        StringJoiner requestParams = new StringJoiner("&");
-        if(Objects.nonNull(libsvmPredictParameterEntity.getProbabilityEstimates()))
-            requestParams.add("probabilityEstimates="+ libsvmPredictParameterEntity.getProbabilityEstimates());
-        sb.append(requestParams.toString());
+        if(Objects.nonNull(libsvmPredictParameterEntity)) {
+            sb.append("?");
+            StringJoiner requestParams = new StringJoiner("&");
+            if (Objects.nonNull(libsvmPredictParameterEntity.getProbabilityEstimates()))
+                requestParams.add("probabilityEstimates=" + libsvmPredictParameterEntity.getProbabilityEstimates());
+            sb.append(requestParams.toString());
+        }
         return sb.toString();
+    }
+
+    private String svmPredictUrl(String dataName, long modelId) {
+        return svmPredictUrl(dataName, modelId, null);
     }
 }

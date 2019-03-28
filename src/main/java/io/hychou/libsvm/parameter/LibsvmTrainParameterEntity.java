@@ -1,6 +1,6 @@
 package io.hychou.libsvm.parameter;
 
-import io.hychou.common.AbstractDataStructure;
+import io.hychou.common.datastructure.AbstractDataStructure;
 import io.hychou.common.SignificantField;
 import libsvm.svm_parameter;
 

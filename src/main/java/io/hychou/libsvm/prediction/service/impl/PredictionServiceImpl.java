@@ -14,32 +14,29 @@ import java.util.Optional;
 public class PredictionServiceImpl implements PredictionService {
 
     private final PredictionEntityRepository predictionEntityRepository;
+    private static final String ID_STRING = "Id";
 
     public PredictionServiceImpl(PredictionEntityRepository predictionEntityRepository) {
         this.predictionEntityRepository = predictionEntityRepository;
     }
 
-    private static String predictionWithIdDoesNotExist(Long id) {
-        return "Prediction with id=" + id + " does not exist";
-    }
-
     @Override
     public PredictionEntity readPredictionById(Long id) throws ServiceException {
         if (id == null) {
-            throw new NullParameterException("Trying to query with null id");
+            throw new NullParameterException(new PredictionEntity().getStringQueryWithNullParam(ID_STRING));
         }
         Optional<PredictionEntity> predictionEntity = predictionEntityRepository.findById(id);
         if (predictionEntity.isPresent()) {
             return predictionEntity.get();
         } else {
-            throw new ElementNotExistException(predictionWithIdDoesNotExist(id));
+            throw new ElementNotExistException(new PredictionEntity().getStringNotExistForParam(ID_STRING, id));
         }
     }
 
     @Override
     public PredictionEntity createPrediction(PredictionEntity predictionEntity) throws ServiceException {
         if (predictionEntity == null || predictionEntity.getDataBytes() == null) {
-            throw new NullParameterException("Trying to create null prediction");
+            throw new NullParameterException(new PredictionEntity().getStringCreateNull());
         }
         predictionEntity = predictionEntityRepository.save(predictionEntity);
         return predictionEntity;
@@ -48,10 +45,10 @@ public class PredictionServiceImpl implements PredictionService {
     @Override
     public PredictionEntity updatePrediction(PredictionEntity predictionEntity) throws ServiceException {
         if (predictionEntity == null || predictionEntity.getId() == null || predictionEntity.getDataBytes() == null) {
-            throw new NullParameterException("Trying to update null prediction");
+            throw new NullParameterException(new PredictionEntity().getStringUpdateNull());
         }
         if (!predictionEntityRepository.existsById(predictionEntity.getId())) {
-            throw new ElementNotExistException(predictionWithIdDoesNotExist(predictionEntity.getId()));
+            throw new ElementNotExistException(new PredictionEntity().getStringNotExistForParam(ID_STRING, predictionEntity.getId()));
         }
         predictionEntity = predictionEntityRepository.save(predictionEntity);
         return predictionEntity;
@@ -63,7 +60,7 @@ public class PredictionServiceImpl implements PredictionService {
             throw new NullParameterException("Trying to delete prediction with null id");
         }
         if (!predictionEntityRepository.existsById(id)) {
-            throw new ElementNotExistException(predictionWithIdDoesNotExist(id));
+            throw new ElementNotExistException(new PredictionEntity().getStringQueryWithNullParam(ID_STRING));
         }
         predictionEntityRepository.deleteById(id);
     }

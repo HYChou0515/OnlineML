@@ -11,14 +11,14 @@ public class SignificantField {
         this.field = field;
     }
 
-    String getName() {
+    public String getName() {
         if(name == null){
             return Constant.NULL_STRING;
         }
         return name;
     }
 
-    Object getField() {
+    public Object getField() {
         if(field == null){
             return Constant.NULL_STRING;
         }

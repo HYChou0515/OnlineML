@@ -37,6 +37,10 @@ public class DataServiceImplTest {
     private DataEntity badData;
     private List<DataInfo> dataInfoList;
 
+    private DataEntity nullData;
+    private DataEntity nullNameData;
+    private DataEntity nullDataBytesData;
+
     @Before
     public void setUp() throws Exception {
         File heartScale = ResourceUtils.getFile("classpath:data/heart_scale");
@@ -63,6 +67,9 @@ public class DataServiceImplTest {
                 new DataInfoEntity(rcv1.getName()),
                 new DataInfoEntity(a9aOther.getName())
         );
+        nullData = null;
+        nullNameData = new DataEntity(null, "null name data".getBytes());
+        nullDataBytesData = new DataEntity("null bytes data", null);
     }
 
     private class DataInfoEntity implements DataInfo {
@@ -150,7 +157,10 @@ public class DataServiceImplTest {
     public void createData_givenNullDataEntity_thenThrowNullParameterException() {
         // Assert
         // Act
-        assertThrows(NullParameterException.class, () -> dataService.createData(null));
+        assertAll(
+                () -> assertThrows(NullParameterException.class, () -> dataService.createData(nullData)),
+                () -> assertThrows(NullParameterException.class, () -> dataService.createData(nullDataBytesData))
+        );
     }
 
     @Test
@@ -194,7 +204,11 @@ public class DataServiceImplTest {
     public void updateData_givenNullDataEntity_thenThrowNullParameterException() {
         // Assert
         // Act
-        assertThrows(NullParameterException.class, () -> dataService.updateData(null));
+        assertAll(
+                () -> assertThrows(NullParameterException.class, () -> dataService.updateData(nullData)),
+                () -> assertThrows(NullParameterException.class, () -> dataService.updateData(nullNameData)),
+                () -> assertThrows(NullParameterException.class, () -> dataService.updateData(nullDataBytesData))
+        );
     }
 
     @Test

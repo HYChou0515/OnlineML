@@ -1,8 +1,10 @@
 package io.hychou.libsvm.model.entity;
 
-import io.hychou.common.AbstractDataStructure;
 import io.hychou.common.Constant;
 import io.hychou.common.SignificantField;
+import io.hychou.common.datastructure.AbstractCrudDataStructure;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,12 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class ModelEntity extends AbstractDataStructure {
+public class ModelEntity extends AbstractCrudDataStructure {
     @Id
     @GeneratedValue
+    @Getter
+    @Setter
     private Long id;
 
     @Column(length= Constant.GB)
+    @Getter
+    @Setter
     private byte[] dataBytes;
 
     public ModelEntity(){}
@@ -32,24 +38,7 @@ public class ModelEntity extends AbstractDataStructure {
     }
 
     public String getFileName() {
-        return "model"+getId();
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public byte[] getDataBytes() {
-        return dataBytes;
-    }
-
-    public void setDataBytes(byte[] dataBytes) {
-        this.dataBytes = dataBytes;
+        return "model"+id;
     }
 
     @Override

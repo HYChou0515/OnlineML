@@ -39,6 +39,9 @@ dependencies {
     // Swagger
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+    
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.16.20'
 
     //For gradle 4.6 and later    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     compileOnly "org.springframework.boot:spring-boot-configuration-processor"

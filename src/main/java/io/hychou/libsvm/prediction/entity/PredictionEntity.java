@@ -1,8 +1,10 @@
 package io.hychou.libsvm.prediction.entity;
 
-import io.hychou.common.AbstractDataStructure;
+import io.hychou.common.datastructure.AbstractCrudDataStructure;
 import io.hychou.common.Constant;
 import io.hychou.common.SignificantField;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,12 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class PredictionEntity extends AbstractDataStructure {
+public class PredictionEntity extends AbstractCrudDataStructure {
     @Id
     @GeneratedValue
+    @Getter
+    @Setter
     private Long id;
 
     @Column(length = Constant.GB)
+    @Getter
+    @Setter
     private byte[] dataBytes;
 
     public PredictionEntity() {
@@ -33,23 +39,7 @@ public class PredictionEntity extends AbstractDataStructure {
     }
 
     public String getFileName() {
-        return "prediction" + getId();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public byte[] getDataBytes() {
-        return dataBytes;
-    }
-
-    public void setDataBytes(byte[] dataBytes) {
-        this.dataBytes = dataBytes;
+        return "prediction" + id;
     }
 
     @Override

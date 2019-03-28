@@ -2,7 +2,6 @@ package io.hychou.data.controller;
 
 import io.hychou.common.MessageResponseEntity;
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.servererror.MultipartFileCannotGetBytesException;
 import io.hychou.data.entity.DataEntity;
 import io.hychou.data.entity.DataInfo;
 import io.hychou.data.service.DataService;
@@ -13,10 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 import static io.hychou.common.Constant.SUCCESS_MESSAGE;
+import static io.hychou.common.util.TransformUtil.getBytesFrom;
 
 @RestController
 public class DataController {
@@ -45,7 +44,7 @@ public class DataController {
         }
     }
 
-    @PostMapping(value=RequestMappingPath.CreateDataByName,
+    @PostMapping(value = RequestMappingPath.CreateDataByName,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public MessageResponseEntity createDataByName(@PathVariable String name, @RequestPart("blob") MultipartFile multipartFile) {
         try {
@@ -75,14 +74,6 @@ public class DataController {
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).build();
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
-        }
-    }
-
-    private static byte[] getBytesFrom(MultipartFile multipartFile) throws ServiceException {
-        try {
-            return multipartFile.getBytes();
-        } catch (IOException e) {
-            throw new MultipartFileCannotGetBytesException("Fail to transform multipartFile into byte array", e);
         }
     }
 }

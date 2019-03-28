@@ -5,40 +5,42 @@ import io.hychou.common.exception.service.clienterror.IllegalParameterException;
 import io.hychou.common.exception.service.servererror.FileSystemReadException;
 import io.hychou.common.exception.service.servererror.FileSystemWriteException;
 import io.hychou.data.entity.DataEntity;
-import io.hychou.data.util.DataUtils;
+import io.hychou.data.entity.DataPoint;
 import io.hychou.libsvm.model.entity.ModelEntity;
-import io.hychou.libsvm.parameter.LibsvmParameterEntity;
+import io.hychou.libsvm.parameter.LibsvmTrainParameterEntity;
 import io.hychou.libsvm.train.service.TrainService;
+import libsvm.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import libsvm.*;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.StringTokenizer;
 import java.util.Vector;
+
+import static io.hychou.data.entity.DataPoint.parseDataPoint;
+import static io.hychou.data.util.DataUtils.toSvmNodes;
 
 @Service
 public class TrainServiceImpl implements TrainService {
 
-    private final String serviceTmpDir;
-    private static final long COLLISION_MAX = 50L;
+    private final long collisionMax;
     private static final String MODEL_EXTENSION = ".model";
     private static final svm_parameter DEFAULT_PARAMETER = getDefaultParameter();
 
     @Autowired
-    public TrainServiceImpl(@Value("${filesystem.path.tmp}") String serviceTmpDir) {
-        this.serviceTmpDir = serviceTmpDir;
+    public TrainServiceImpl(@Value("#{new Long('${filesystem.path.hash.collision}')}") long collisionMax) {
+        this.collisionMax = collisionMax;
     }
 
     @Override
-    public ModelEntity svmTrain(DataEntity dataEntity, LibsvmParameterEntity libsvmParameterEntity) throws ServiceException {
+    public ModelEntity svmTrain(DataEntity dataEntity, LibsvmTrainParameterEntity libsvmTrainParameterEntity) throws ServiceException {
         // Prepare svm parameter
-        svm_parameter param = libsvmParameterEntity.toSvmParameter(DEFAULT_PARAMETER);
+        svm_parameter param = libsvmTrainParameterEntity.toSvmParameter(DEFAULT_PARAMETER);
         // Prepare svm problem
         svm_problem prob;
         try {
@@ -67,7 +69,7 @@ public class TrainServiceImpl implements TrainService {
     private byte[] getModelByteArray(svm_model model) throws ServiceException {
         String tmpFilePath;
         try {
-            tmpFilePath= getUniqueFilePath(serviceTmpDir, model);
+            tmpFilePath = getUniqueModelFilePath(System.getProperty("java.io.tmpdir"), model, this.collisionMax);
         } catch (IOException e) {
             throw new FileSystemWriteException("Model cannot be written", e);
         }
@@ -83,23 +85,22 @@ public class TrainServiceImpl implements TrainService {
         }
     }
 
-    private static String getUniqueFilePath(String serviceTmpDir, svm_model model) throws IOException{
+    private static String getUniqueModelFilePath(String serviceTmpDir, svm_model model, long collisionMax) throws IOException {
         int trial = 0;
-        while(trial < COLLISION_MAX) {
-            trial++;
+        while (trial++ < collisionMax) {
             double randomSeed = Math.random();
             int hash = Objects.hash(
                     Arrays.hashCode(model.getClass().getDeclaredFields()),
                     randomSeed
             );
             String sha256hex = DigestUtils.sha256Hex(String.valueOf(hash));
-            String tmpFilePath = serviceTmpDir + sha256hex + MODEL_EXTENSION;
+            String tmpFilePath = Paths.get(serviceTmpDir, sha256hex + MODEL_EXTENSION).toString();
             File f = new File(tmpFilePath);
-            if(!f.exists()) {
+            if (!f.exists()) {
                 return tmpFilePath;
             }
         }
-        throw new IOException("File name collision over " + COLLISION_MAX + " times");
+        throw new IOException("File name collision over " + collisionMax + " times");
     }
 
     private static svm_problem readProblemAndAdjustParameter(DataEntity dataEntity, svm_parameter param) throws IOException {
@@ -109,37 +110,29 @@ public class TrainServiceImpl implements TrainService {
         Vector<svm_node[]> vx = new Vector<>();
         int max_index = 0;
 
-        while(true)
-        {
+        while (true) {
             String line = fp.readLine();
-            if(line == null) break;
+            if (line == null) break;
 
-            StringTokenizer st = new StringTokenizer(line," \t\n\r\f:");
+            DataPoint dataPoint = parseDataPoint(line);
+            svm_node[] x = toSvmNodes(dataPoint.getX());
 
-            vy.addElement(DataUtils.atof(st.nextToken()));
-            int m = st.countTokens()/2;
-            svm_node[] x = new svm_node[m];
-            for(int j=0;j<m;j++)
-            {
-                x[j] = new svm_node();
-                x[j].index = DataUtils.atoi(st.nextToken());
-                x[j].value = DataUtils.atof(st.nextToken());
-            }
-            if(m>0) max_index = Math.max(max_index, x[m-1].index);
+            vy.addElement(dataPoint.getY());
+            if (x.length > 0) max_index = Math.max(max_index, x[x.length - 1].index);
             vx.addElement(x);
         }
 
         svm_problem prob = new svm_problem();
         prob.l = vy.size();
         prob.x = new svm_node[prob.l][];
-        for(int i=0;i<prob.l;i++)
+        for (int i = 0; i < prob.l; i++)
             prob.x[i] = vx.elementAt(i);
         prob.y = new double[prob.l];
-        for(int i=0;i<prob.l;i++)
+        for (int i = 0; i < prob.l; i++)
             prob.y[i] = vy.elementAt(i);
 
-        if(param.gamma == 0 && max_index > 0)
-            param.gamma = 1.0/max_index;
+        if (param.gamma == 0 && max_index > 0)
+            param.gamma = 1.0 / max_index;
 
         fp.close();
         return prob;
@@ -151,7 +144,7 @@ public class TrainServiceImpl implements TrainService {
         param.svm_type = svm_parameter.C_SVC;
         param.kernel_type = svm_parameter.RBF;
         param.degree = 3;
-        param.gamma = 0;	// 1/num_features
+        param.gamma = 0;    // 1/num_features
         param.coef0 = 0;
         param.nu = 0.5;
         param.cache_size = 100;

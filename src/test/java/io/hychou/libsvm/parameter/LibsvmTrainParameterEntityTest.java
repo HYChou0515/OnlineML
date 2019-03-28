@@ -11,15 +11,15 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
-public class LibsvmParameterEntityTest extends DataStructureTest {
+public class LibsvmTrainParameterEntityTest extends DataStructureTest {
 
-    private LibsvmParameterEntity entity;
+    private LibsvmTrainParameterEntity entity;
     private svm_parameter defaultParam;
-    private String entityToString = "LibsvmParameterEntity{svmType=C_SVC, kernelType=LINEAR, degree=1, gamma=2.0, coef0=3.0, cacheSize=4.0, eps=5.0, c=6.0, nu=7.0, p=8.0, shrinking=true, probability=false}";
+    private String entityToString = "LibsvmTrainParameterEntity{svmType=C_SVC, kernelType=LINEAR, degree=1, gamma=2.0, coef0=3.0, cacheSize=4.0, eps=5.0, c=6.0, nu=7.0, p=8.0, shrinking=true, probability=false}";
 
     @Before
     public void setUp() {
-        entity = new LibsvmParameterEntity();
+        entity = new LibsvmTrainParameterEntity();
 
         entity.setSvmType(SvmTypeEnum.C_SVC);
         entity.setKernelType(KernelTypeEnum.LINEAR);
@@ -53,7 +53,7 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
     @Override
     public void equals_givenSelf_thenTrueShouldBeFound() {
         // given
-        LibsvmParameterEntity e = entity;
+        LibsvmTrainParameterEntity e = entity;
         // when
         assertEqualsAndHaveSameHashCode(entity, e);
     }
@@ -62,20 +62,20 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
     @Override
     public void equals_givenSameObject_thenTrueShouldBeFound() {
         // given
-        Object e = new LibsvmParameterEntity();
+        Object e = new LibsvmTrainParameterEntity();
 
-        ((LibsvmParameterEntity) e).setSvmType(entity.getSvmType());
-        ((LibsvmParameterEntity) e).setKernelType(entity.getKernelType());
-        ((LibsvmParameterEntity) e).setDegree(entity.getDegree());
-        ((LibsvmParameterEntity) e).setGamma(entity.getGamma());
-        ((LibsvmParameterEntity) e).setCoef0(entity.getCoef0());
-        ((LibsvmParameterEntity) e).setCacheSize(entity.getCacheSize());
-        ((LibsvmParameterEntity) e).setEps(entity.getEps());
-        ((LibsvmParameterEntity) e).setC(entity.getC());
-        ((LibsvmParameterEntity) e).setNu(entity.getNu());
-        ((LibsvmParameterEntity) e).setP(entity.getP());
-        ((LibsvmParameterEntity) e).setShrinking(entity.getShrinking());
-        ((LibsvmParameterEntity) e).setProbability(entity.getProbability());
+        ((LibsvmTrainParameterEntity) e).setSvmType(entity.getSvmType());
+        ((LibsvmTrainParameterEntity) e).setKernelType(entity.getKernelType());
+        ((LibsvmTrainParameterEntity) e).setDegree(entity.getDegree());
+        ((LibsvmTrainParameterEntity) e).setGamma(entity.getGamma());
+        ((LibsvmTrainParameterEntity) e).setCoef0(entity.getCoef0());
+        ((LibsvmTrainParameterEntity) e).setCacheSize(entity.getCacheSize());
+        ((LibsvmTrainParameterEntity) e).setEps(entity.getEps());
+        ((LibsvmTrainParameterEntity) e).setC(entity.getC());
+        ((LibsvmTrainParameterEntity) e).setNu(entity.getNu());
+        ((LibsvmTrainParameterEntity) e).setP(entity.getP());
+        ((LibsvmTrainParameterEntity) e).setShrinking(entity.getShrinking());
+        ((LibsvmTrainParameterEntity) e).setProbability(entity.getProbability());
 
         // when
         assertEqualsAndHaveSameHashCode(entity, e);
@@ -85,7 +85,7 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
     @Override
     public void equals_givenSame_thenTrueShouldBeFound() {
         // given
-        LibsvmParameterEntity e = new LibsvmParameterEntity();
+        LibsvmTrainParameterEntity e = new LibsvmTrainParameterEntity();
 
         e.setSvmType(entity.getSvmType());
         e.setKernelType(entity.getKernelType());
@@ -108,7 +108,7 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
     @Override
     public void equals_givenDiff_thenFalseShouldBeFound() {
         // given
-        LibsvmParameterEntity e = new LibsvmParameterEntity();
+        LibsvmTrainParameterEntity e = new LibsvmTrainParameterEntity();
 
         e.setSvmType(entity.getSvmType());
         e.setKernelType(entity.getKernelType());
@@ -131,7 +131,7 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
     @Override
     public void equals_givenNull_thenFalseShouldBeFound() {
         // given
-        LibsvmParameterEntity e = null;
+        LibsvmTrainParameterEntity e = null;
         // when
         assertNotEqualAndHaveDifferentHashCode(entity, e);
     }
@@ -190,7 +190,7 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
     @Test
     public void toSvmParameter_givenDefaultParameter_thenReturnCorrectSvmParameter() {
         // arrange
-        LibsvmParameterEntity param = LibsvmParameterEntity.build()
+        LibsvmTrainParameterEntity param = LibsvmTrainParameterEntity.build()
                 .svmType(SvmTypeEnum.ONE_CLASS).c(3.2)
                 .probability(false).shrinking(false).done();
         svm_parameter expected = (svm_parameter) defaultParam.clone();
@@ -220,7 +220,7 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
     @Test
     public void toSvmParameter_givenDefaultParameter2_thenReturnCorrectSvmParameter() {
         // arrange
-        LibsvmParameterEntity param = LibsvmParameterEntity.build()
+        LibsvmTrainParameterEntity param = LibsvmTrainParameterEntity.build()
                 .kernelType(KernelTypeEnum.RBF)
                 .degree(3).gamma(4.0).coef0(5.0).cacheSize(6.0)
                 .eps(7.0).nu(9.0).p(10.0).done();
@@ -255,7 +255,7 @@ public class LibsvmParameterEntityTest extends DataStructureTest {
     @Test
     public void toSvmParameter_givenDefaultParameter3_thenReturnCorrectSvmParameter() {
         // arrange
-        LibsvmParameterEntity param = LibsvmParameterEntity.build()
+        LibsvmTrainParameterEntity param = LibsvmTrainParameterEntity.build()
                 .probability(true).done();
         svm_parameter expected = (svm_parameter) defaultParam.clone();
         expected.probability = 1;

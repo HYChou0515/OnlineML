@@ -12,7 +12,7 @@ import java.util.LinkedHashSet;
 
 public class MessageResponseEntity<T> extends ResponseEntity<T> {
 
-    public final static String HTTP_HEADER_STATUS_MESSAGE = "Status-Message";
+    public static final String HTTP_HEADER_STATUS_MESSAGE = "Status-Message";
 
     public MessageResponseEntity(MultiValueMap<String, String> headers, HttpStatus status) {
         this(null, headers, status);

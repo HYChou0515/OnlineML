@@ -20,12 +20,11 @@ import java.util.Optional;
 @Service
 public class DataServiceImpl implements DataService {
     private final DataEntityRepository dataEntityRepository;
+    private static final String ID_STRING = "Name";
 
     public DataServiceImpl(DataEntityRepository dataEntityRepository) {
         this.dataEntityRepository = dataEntityRepository;
     }
-
-    private static final String DOES_NOT_EXIST = " does not exist";
 
     @Override
     public List<DataInfo> listDataInfo() {
@@ -34,25 +33,25 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public DataEntity readDataByName(String name) throws ServiceException {
-        if(name == null) {
-            throw new NullParameterException("Trying to query with null name");
+        if (name == null) {
+            throw new NullParameterException(new DataEntity().getStringQueryWithNullParam(ID_STRING));
         }
         Optional<DataEntity> dataEntity = dataEntityRepository.findByName(name);
-        if(dataEntity.isPresent()) {
+        if (dataEntity.isPresent()) {
             return dataEntity.get();
         } else {
-            throw new ElementNotExistException("Data with name="+name+DOES_NOT_EXIST);
+            throw new ElementNotExistException(new DataEntity().getStringNotExistForParam(ID_STRING, name));
         }
     }
 
     @Override
     public DataEntity createData(DataEntity dataEntity) throws ServiceException {
         if (dataEntity == null || dataEntity.getName() == null || dataEntity.getDataBytes() == null) {
-            throw new NullParameterException("Trying to create null data");
+            throw new NullParameterException(new DataEntity().getStringCreateNull());
         }
         checkData(dataEntity.getDataBytes());
-        if(dataEntityRepository.existsByName(dataEntity.getName())) {
-            throw new ElementAlreadyExistException("Trying to create data with existing name="+dataEntity.getName());
+        if (dataEntityRepository.existsByName(dataEntity.getName())) {
+            throw new ElementAlreadyExistException(new DataEntity().getStringCreateExistingForParam(ID_STRING, dataEntity.getName()));
         }
         dataEntity = dataEntityRepository.save(dataEntity);
         return dataEntity;
@@ -61,11 +60,11 @@ public class DataServiceImpl implements DataService {
     @Override
     public DataEntity updateData(DataEntity dataEntity) throws ServiceException {
         if (dataEntity == null || dataEntity.getName() == null || dataEntity.getDataBytes() == null) {
-            throw new NullParameterException("Trying to update for null data");
+            throw new NullParameterException(new DataEntity().getStringUpdateNull());
         }
         checkData(dataEntity.getDataBytes());
-        if( ! dataEntityRepository.existsByName(dataEntity.getName())) {
-            throw new ElementNotExistException("Data with name="+dataEntity.getName()+DOES_NOT_EXIST);
+        if (!dataEntityRepository.existsByName(dataEntity.getName())) {
+            throw new ElementNotExistException(new DataEntity().getStringNotExistForParam(ID_STRING, dataEntity.getName()));
         }
         dataEntity = dataEntityRepository.save(dataEntity);
         return dataEntity;
@@ -73,11 +72,11 @@ public class DataServiceImpl implements DataService {
 
     @Override
     public void deleteDataByName(String name) throws ServiceException {
-        if(name == null) {
-            throw new NullParameterException("Trying to delete data with empty name");
+        if (name == null) {
+            throw new NullParameterException(new DataEntity().getStringDeleteWithNullParam(ID_STRING));
         }
-        if( ! dataEntityRepository.existsByName(name)) {
-            throw new ElementNotExistException("Data with id="+name+DOES_NOT_EXIST);
+        if (!dataEntityRepository.existsByName(name)) {
+            throw new ElementNotExistException(new DataEntity().getStringNotExistForParam(ID_STRING, name));
         }
         dataEntityRepository.deleteByName(name);
     }

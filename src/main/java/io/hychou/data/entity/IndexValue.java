@@ -1,5 +1,5 @@
 package io.hychou.data.entity;
-import io.hychou.common.AbstractDataStructure;
+import io.hychou.common.datastructure.AbstractDataStructure;
 import io.hychou.common.SignificantField;
 
 import java.util.ArrayList;

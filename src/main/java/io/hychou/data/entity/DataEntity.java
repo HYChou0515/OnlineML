@@ -1,6 +1,6 @@
 package io.hychou.data.entity;
 
-import io.hychou.common.AbstractDataStructure;
+import io.hychou.common.datastructure.AbstractCrudDataStructure;
 import io.hychou.common.Constant;
 import io.hychou.common.SignificantField;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class DataEntity extends AbstractDataStructure {
+public class DataEntity extends AbstractCrudDataStructure {
     @Id
     private String name;
 

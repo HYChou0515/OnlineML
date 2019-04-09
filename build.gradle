@@ -1,15 +1,17 @@
 buildscript {
     repositories {
-        mavenCentral()
+		maven { url 'http://repo1.maven.org/maven2' }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6"
     }
 }
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'jacoco'
+apply plugin: 'org.sonarqube'
 
 group 'io.hychou'
 version '1.0-SNAPSHOT'
@@ -18,7 +20,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+	maven { url 'http://repo1.maven.org/maven2' }
 }
 
 dependencies {
@@ -37,12 +39,16 @@ dependencies {
     // Swagger
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+    
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.16.20'
 
     //For gradle 4.6 and later    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     compileOnly "org.springframework.boot:spring-boot-configuration-processor"
 
     // Business Dependencies
     compile group: 'tw.edu.ntu.csie', name: 'libsvm', version: '3.17'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
 
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.0.RELEASE'
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'

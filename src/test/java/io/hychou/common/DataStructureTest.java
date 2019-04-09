@@ -1,12 +1,25 @@
 package io.hychou.common;
 
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public abstract class DataStructureTest {
 
-    protected boolean equalsThenHashCodeEqual(Object a, Object b) {
-        if ( !a.equals(b)) {
-            return false;
+    protected static void assertEqualsAndHaveSameHashCode(Object expected, Object actual) {
+        assertNotNull(expected);
+        assertNotNull(actual);
+        assertTrue(expected.equals(actual) && actual.equals(expected));
+        assertEquals(expected.hashCode(), actual.hashCode(), "HashCode");
+    }
+    protected static void assertNotEqualAndHaveDifferentHashCode(Object expected, Object actual) {
+        if(Objects.nonNull(expected))
+            assertFalse(expected.equals(actual));
+        if(Objects.nonNull(actual))
+            assertFalse(actual.equals(expected));
+        if(Objects.nonNull(expected) && Objects.nonNull(actual)) {
+            assertNotEquals(expected.hashCode(), actual.hashCode(), "HashCode");
         }
-        return a.equals(b) && a.hashCode() == b.hashCode();
     }
 
     // equals
@@ -22,10 +35,6 @@ public abstract class DataStructureTest {
     abstract public void equals_givenNull_thenFalseShouldBeFound();
 
     abstract public void equals_givenAnotherObject_thenFalseShouldBeFound();
-
-    // hashCode
-
-    abstract public void hashCode_thenCorrectHashShouldBeFound();
 
     // toString
 

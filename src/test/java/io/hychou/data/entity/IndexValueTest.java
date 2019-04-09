@@ -3,12 +3,11 @@ import io.hychou.common.DataStructureTest;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class IndexValueTest extends DataStructureTest {
 
     private IndexValue s1;
-    private int s1HashCode = 1073742816;
     private String s1ToString = "IndexValue{index=1, value=2.0}";
 
     @Before
@@ -24,8 +23,7 @@ public class IndexValueTest extends DataStructureTest {
         // given
         IndexValue s = s1;
         // when
-        boolean found = equalsThenHashCodeEqual(s1, s);
-        assertThat(found).isTrue();
+        assertEqualsAndHaveSameHashCode(s1, s);
     }
 
     @Test
@@ -36,8 +34,7 @@ public class IndexValueTest extends DataStructureTest {
         ((IndexValue) s).setIndex(s1.getIndex());
         ((IndexValue) s).setValue(s1.getValue());
         // when
-        boolean found = equalsThenHashCodeEqual(s1, s);
-        assertThat(found).isTrue();
+        assertEqualsAndHaveSameHashCode(s1, s);
     }
 
     @Test
@@ -48,8 +45,7 @@ public class IndexValueTest extends DataStructureTest {
         s.setIndex(s1.getIndex());
         s.setValue(s1.getValue());
         // when
-        boolean found = equalsThenHashCodeEqual(s1, s);
-        assertThat(found).isTrue();
+        assertEqualsAndHaveSameHashCode(s1, s);
     }
 
     @Test
@@ -60,8 +56,7 @@ public class IndexValueTest extends DataStructureTest {
         s.setIndex(s1.getIndex());
         s.setValue(s1.getValue()+1);
         // when
-        boolean found = equalsThenHashCodeEqual(s1, s);
-        assertThat(found).isFalse();
+        assertNotEqualAndHaveDifferentHashCode(s1, s);
     }
 
     @Test
@@ -70,8 +65,7 @@ public class IndexValueTest extends DataStructureTest {
         // given
         IndexValue n = null;
         // when
-        boolean found = equalsThenHashCodeEqual(s1, n);
-        assertThat(found).isFalse();
+        assertNotEqualAndHaveDifferentHashCode(s1, n);
     }
 
     @Test
@@ -80,21 +74,13 @@ public class IndexValueTest extends DataStructureTest {
         // given
         Integer n = new Integer(0);
         // when
-        boolean found = equalsThenHashCodeEqual(s1, n);
-        assertThat(found).isFalse();
-    }
-
-    @Test
-    @Override
-    public void hashCode_thenCorrectHashShouldBeFound() {
-        int found = s1.hashCode();
-        assertThat(found).as("Hashcode").isEqualTo(s1HashCode);
+        assertNotEqualAndHaveDifferentHashCode(s1, n);
     }
 
     @Test
     @Override
     public void toString_thenCorrectStringShouldBeFound() {
         String found = s1.toString();
-        assertThat(found).as("toString").isEqualTo(s1ToString);
+        assertEquals(s1ToString, found, "toString");
     }
 }

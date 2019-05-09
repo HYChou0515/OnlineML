@@ -1,0 +1,6 @@
+[submodule "service/data"]
+	path = service/data
+	url = https://github.com/HYChou0515/OnlineML-Data-Service.git
+[submodule "service/libsvm"]
+	path = service/libsvm
+	url = https://github.com/HYChou0515/OnlineML-Libsvm-Service.git

@@ -4,3 +4,6 @@
 [submodule "service/libsvm"]
 	path = service/libsvm
 	url = https://github.com/HYChou0515/OnlineML-Libsvm-Service.git
+[submodule "service/swagger"]
+	path = service/swagger
+	url = https://github.com/HYChou0515/OnlineML-Swagger-Service.git

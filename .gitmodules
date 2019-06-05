@@ -7,3 +7,6 @@
 [submodule "service/swagger"]
 	path = service/swagger
 	url = https://github.com/HYChou0515/OnlineML-Swagger-Service.git
+[submodule "service/eureka"]
+	path = service/eureka
+	url = https://github.com/HYChou0515/OnlineML-Eureka-Service.git

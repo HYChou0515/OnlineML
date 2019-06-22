@@ -1,12 +1,12 @@
-package io.hychou.runnable.python.runner.entity;
+package io.hychou.runnable.timedependent.entity;
 
 import io.hychou.file.entity.FileInfo;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 
-public interface TimeDependentFileInfo {
-    @Value("#{target.crudTimeVariantDataStructure}")
+public interface TimeDependentInfo {
+    @Value("#{target.timeVariantData}")
     FileInfo getFileInfo();
 
     Date getRequiredTimestamp();

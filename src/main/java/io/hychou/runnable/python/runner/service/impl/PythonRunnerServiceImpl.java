@@ -4,13 +4,13 @@ import io.hychou.common.exception.service.ServiceException;
 import io.hychou.common.exception.service.clienterror.ElementNotExistException;
 import io.hychou.common.exception.service.clienterror.NullParameterException;
 import io.hychou.file.dao.FileEntityRepository;
-import io.hychou.runnable.TimeDependentEntity;
+import io.hychou.file.entity.FileEntity;
 import io.hychou.runnable.python.anacondayaml.dao.AnacondaYamlRepository;
 import io.hychou.runnable.python.runner.dao.PythonRunnerRepository;
 import io.hychou.runnable.python.runner.entity.PythonRunnerEntity;
 import io.hychou.runnable.python.runner.entity.PythonRunnerInfo;
-import io.hychou.runnable.python.runner.entity.TimeDependentFileEntity;
 import io.hychou.runnable.python.runner.service.PythonRunnerService;
+import io.hychou.runnable.timedependent.entity.TimeDependentEntity;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
@@ -102,14 +102,14 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
     }
 
     private Optional<PythonRunnerEntity> getTheSamePythonRunnerEntity(PythonRunnerEntity pythonRunnerEntity) throws ServiceException {
-        if (!fileEntityRepository.existsById(pythonRunnerEntity.getPythonCode().getCrudTimeVariantDataStructure().getId())) {
+        if (!fileEntityRepository.existsById(pythonRunnerEntity.getPythonCode().getTimeVariantData().getId())) {
             return Optional.empty();
         }
-        if (!anacondaYamlRepository.existsById(pythonRunnerEntity.getEnvironment().getCrudTimeVariantDataStructure().getId())) {
+        if (!anacondaYamlRepository.existsById(pythonRunnerEntity.getEnvironment().getTimeVariantData().getId())) {
             return Optional.empty();
         }
-        for (TimeDependentFileEntity timeDependentFileEntity : pythonRunnerEntity.getDependencies()) {
-            if (!fileEntityRepository.existsById(timeDependentFileEntity.getCrudTimeVariantDataStructure().getId())) {
+        for (TimeDependentEntity<FileEntity> timeDependentFileEntity : pythonRunnerEntity.getDependencies()) {
+            if (!fileEntityRepository.existsById(timeDependentFileEntity.getTimeVariantData().getId())) {
                 return Optional.empty();
             }
         }
@@ -117,9 +117,9 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
         // CrudRepository seems don't have good support for selecting by set/list comparison
         // So we select by some composite columns and then do the set/list comparison manually
         List<PythonRunnerEntity> theSamePythonRunnerEntities =
-                pythonRunnerRepository.findByPythonCode_CrudTimeVariantDataStructureAndEnvironment_CrudTimeVariantDataStructure(
-                        pythonRunnerEntity.getPythonCode().getCrudTimeVariantDataStructure(),
-                        pythonRunnerEntity.getEnvironment().getCrudTimeVariantDataStructure());
+                pythonRunnerRepository.findByPythonCode_TimeVariantDataAndEnvironment_TimeVariantData(
+                        pythonRunnerEntity.getPythonCode().getTimeVariantData(),
+                        pythonRunnerEntity.getEnvironment().getTimeVariantData());
         for (PythonRunnerEntity theSamePythonRunnerEntity : theSamePythonRunnerEntities) {
             if (theSamePythonRunnerEntity.getDependencies().size() != pythonRunnerEntity.getDependencies().size() ||
                     !theSamePythonRunnerEntity.getDependencies().containsAll(pythonRunnerEntity.getDependencies()) ||
@@ -129,18 +129,18 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
 
             // following if statements check whether the used files/env is the same as before
             // if not, delete the old python runner and continue check the next one
-            if (!theSamePythonRunnerEntity.getPythonCode().isDenpendencyValid()) {
+            if (!theSamePythonRunnerEntity.getPythonCode().isDependencyValid()) {
                 this.deletePythonRunnerById(theSamePythonRunnerEntity.getId());
                 continue;
             }
-            if (!theSamePythonRunnerEntity.getEnvironment().isDenpendencyValid()) {
+            if (!theSamePythonRunnerEntity.getEnvironment().isDependencyValid()) {
                 this.deletePythonRunnerById(theSamePythonRunnerEntity.getId());
                 continue;
             }
             // the map-reduce return true if the dependencies is empty or all of the elements have good timestamp
             // use orElse(true) as we have done set comparison earlier, two empty sets are considered equal
             if (!theSamePythonRunnerEntity.getDependencies().stream()
-                    .map(TimeDependentEntity::isDenpendencyValid)
+                    .map(TimeDependentEntity::isDependencyValid)
                     .reduce(Boolean::logicalAnd).orElse(true)) {
                 this.deletePythonRunnerById(theSamePythonRunnerEntity.getId());
                 continue;
@@ -182,10 +182,10 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
         private void prepareEnvironment() throws IOException {
             this.absoluteWorkDirectory = Files.createTempDirectory(null);
             this.absoluteWorkDirectory.toFile().deleteOnExit();
-            pythonRunnerEntity.getPythonCode().getCrudTimeVariantDataStructure().writeToFile(this.absoluteWorkDirectory);
-            pythonRunnerEntity.getEnvironment().getCrudTimeVariantDataStructure().prepareEnvironment(this.absoluteWorkDirectory);
-            for (TimeDependentFileEntity dependency : pythonRunnerEntity.getDependencies()) {
-                dependency.getCrudTimeVariantDataStructure().writeToFile(this.absoluteWorkDirectory);
+            pythonRunnerEntity.getPythonCode().getTimeVariantData().writeToFile(this.absoluteWorkDirectory);
+            pythonRunnerEntity.getEnvironment().getTimeVariantData().prepareEnvironment(this.absoluteWorkDirectory);
+            for (TimeDependentEntity<FileEntity> dependency : pythonRunnerEntity.getDependencies()) {
+                dependency.getTimeVariantData().writeToFile(this.absoluteWorkDirectory);
             }
         }
 

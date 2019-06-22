@@ -1,6 +1,6 @@
 package io.hychou.runnable.python.anacondayaml.entity;
 
-import io.hychou.file.entity.FileEntity;
+import io.hychou.common.datastructure.blob.entity.BlobEntity;
 import org.apache.commons.io.FileUtils;
 
 import javax.persistence.Entity;
@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Entity
-public class AnacondaYamlEntity extends FileEntity {
+public class AnacondaYamlEntity extends BlobEntity {
 
     public AnacondaYamlEntity() {
         super();

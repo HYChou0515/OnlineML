@@ -14,6 +14,6 @@ public interface PythonRunnerRepository extends CrudRepository<PythonRunnerEntit
 
     Optional<PythonRunnerInfo> findPythonRunnerInfoById(Long id);
 
-    List<PythonRunnerEntity> findByPythonCode_CrudTimeVariantDataStructureAndEnvironment_CrudTimeVariantDataStructure(
+    List<PythonRunnerEntity> findByPythonCode_TimeVariantDataAndEnvironment_TimeVariantData(
             FileEntity pythonCode, AnacondaYamlEntity environment);
 }

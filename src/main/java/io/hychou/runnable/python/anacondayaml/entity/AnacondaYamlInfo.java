@@ -4,6 +4,8 @@ import java.util.Date;
 
 public interface AnacondaYamlInfo {
     Long getId();
+
     String getName();
+
     Date getLastModified();
 }

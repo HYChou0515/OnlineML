@@ -66,8 +66,9 @@ public class FileController {
     public MessageResponseEntity createFileByName(@PathVariable String name, @RequestPart("file") MultipartFile multipartFile) {
         try {
             byte[] bytes = getBytesFrom(multipartFile);
-            fileService.createBlob(new FileEntity(name, bytes));
-            return MessageResponseEntity.ok(SUCCESS_MESSAGE).build();
+            FileEntity fileEntity = fileService.createBlob(new FileEntity(name, bytes));
+            FileInfo fileInfo = fileService.readBlobInfoById(fileEntity.getId());
+            return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(fileInfo);
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
         }

@@ -33,8 +33,8 @@ public class AnacondaYamlController {
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(anacondaYamlService.listBlobInfo());
         }
         try {
-            List<AnacondaYamlInfo> fileInfo = anacondaYamlService.readBlobInfoByName(name);
-            return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(fileInfo);
+            List<AnacondaYamlInfo> anacondaYamlInfoList = anacondaYamlService.readBlobInfoByName(name);
+            return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(anacondaYamlInfoList);
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
         }
@@ -43,8 +43,8 @@ public class AnacondaYamlController {
     @GetMapping(RequestMappingPath.ReadAnacondaYamlInfoById)
     public MessageResponseEntity readAnacondaYamlInfoById(@PathVariable Long id) {
         try {
-            AnacondaYamlInfo fileInfo = anacondaYamlService.readBlobInfoById(id);
-            return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(fileInfo);
+            AnacondaYamlInfo anacondaYamlInfo = anacondaYamlService.readBlobInfoById(id);
+            return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(anacondaYamlInfo);
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
         }
@@ -53,9 +53,9 @@ public class AnacondaYamlController {
     @GetMapping(RequestMappingPath.ReadAnacondaYamlById)
     public MessageResponseEntity readAnacondaYamlById(@PathVariable Long id) {
         try {
-            AnacondaYamlEntity fileEntity = anacondaYamlService.readBlobById(id);
-            Resource resource = new ByteArrayResource(fileEntity.getBlobBytes());
-            return MessageResponseEntity.ok(SUCCESS_MESSAGE).multipartFormData(fileEntity.getName(), resource);
+            AnacondaYamlEntity anacondaYamlEntity = anacondaYamlService.readBlobById(id);
+            Resource resource = new ByteArrayResource(anacondaYamlEntity.getBlobBytes());
+            return MessageResponseEntity.ok(SUCCESS_MESSAGE).multipartFormData(anacondaYamlEntity.getName(), resource);
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
         }
@@ -63,18 +63,19 @@ public class AnacondaYamlController {
 
     @PostMapping(value = RequestMappingPath.CreateAnacondaYamlByName,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public MessageResponseEntity createAnacondaYamlByName(@PathVariable String name, @RequestPart("file") MultipartFile multipartFile) {
+    public MessageResponseEntity createAnacondaYamlByName(@PathVariable String name, @RequestPart("anaconda_yaml") MultipartFile multipartFile) {
         try {
             byte[] bytes = getBytesFrom(multipartFile);
-            anacondaYamlService.createBlob(new AnacondaYamlEntity(name, bytes));
-            return MessageResponseEntity.ok(SUCCESS_MESSAGE).build();
+            AnacondaYamlEntity anacondaYamlEntity = anacondaYamlService.createBlob(new AnacondaYamlEntity(name, bytes));
+            AnacondaYamlInfo anacondaYamlInfo = anacondaYamlService.readBlobInfoById(anacondaYamlEntity.getId());
+            return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(anacondaYamlInfo);
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
         }
     }
 
     @PutMapping(RequestMappingPath.UpdateAnacondaYamlById)
-    public MessageResponseEntity updateAnacondaYamlById(@PathVariable Long id, @RequestPart("file") MultipartFile multipartFile) {
+    public MessageResponseEntity updateAnacondaYamlById(@PathVariable Long id, @RequestPart("anaconda_yaml") MultipartFile multipartFile) {
         try {
             byte[] bytes = getBytesFrom(multipartFile);
             anacondaYamlService.updateBlobById(id, bytes);

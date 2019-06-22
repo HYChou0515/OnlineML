@@ -80,13 +80,13 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
             fileTree(dir: it, exclude: ['io/hychou/*.class',
-                                        'io/hychou/common/*', ])
+                                        'io/hychou/common/*',])
         })
     }
 }
 
 test {
-    afterTest {desc, result ->
+    afterTest { desc, result ->
         logger.quiet "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
     }
     jacoco {

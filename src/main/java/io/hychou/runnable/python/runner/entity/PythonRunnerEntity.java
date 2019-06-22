@@ -5,6 +5,7 @@ import io.hychou.common.datastructure.AbstractCrudDataStructure;
 import io.hychou.file.entity.FileEntity;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity;
 import io.hychou.runnable.python.runner.RunnerStateEnum;
+import io.hychou.runnable.timedependent.entity.TimeDependentEntity;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,17 +23,17 @@ public class PythonRunnerEntity extends AbstractCrudDataStructure {
     @Getter
     @Setter
     @ManyToOne(cascade = CascadeType.ALL)
-    private TimeDependentFileEntity pythonCode;
+    private TimeDependentEntity<FileEntity> pythonCode;
 
     @Getter
     @Setter
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<TimeDependentFileEntity> dependencies;
+    private Set<TimeDependentEntity<FileEntity>> dependencies;
 
     @Getter
     @Setter
     @ManyToOne(cascade = CascadeType.ALL)
-    private TimeDependentAnacondaYamlEntity environment;
+    private TimeDependentEntity<AnacondaYamlEntity> environment;
 
     @Getter
     @Setter
@@ -73,12 +74,12 @@ public class PythonRunnerEntity extends AbstractCrudDataStructure {
 
     public PythonRunnerEntity(FileEntity pythonCode, List<FileEntity> dependencies, AnacondaYamlEntity environment) {
         this();
-        this.pythonCode = new TimeDependentFileEntity(pythonCode);
+        this.pythonCode = new TimeDependentEntity<>(pythonCode);
         this.dependencies = new HashSet<>();
         for (FileEntity dependency : dependencies) {
-            this.dependencies.add(new TimeDependentFileEntity(dependency));
+            this.dependencies.add(new TimeDependentEntity<>(dependency));
         }
-        this.environment = new TimeDependentAnacondaYamlEntity(environment);
+        this.environment = new TimeDependentEntity<>(environment);
     }
 
     public void toPreparingState() {

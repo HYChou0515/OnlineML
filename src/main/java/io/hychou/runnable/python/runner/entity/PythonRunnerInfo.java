@@ -23,6 +23,8 @@ public interface PythonRunnerInfo {
 
     Date getRunningTimestamp();
 
+    Date getCleaningTimestamp();
+
     Date getFinishedTimestamp();
 
     FileInfo getResult();

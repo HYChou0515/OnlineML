@@ -102,14 +102,14 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
     }
 
     private Optional<PythonRunnerEntity> getTheSamePythonRunnerEntity(PythonRunnerEntity pythonRunnerEntity) throws ServiceException {
-        if (!fileEntityRepository.existsByName(pythonRunnerEntity.getPythonCode().getCrudTimeVariantDataStructure().getName())) {
+        if (!fileEntityRepository.existsById(pythonRunnerEntity.getPythonCode().getCrudTimeVariantDataStructure().getId())) {
             return Optional.empty();
         }
-        if (!anacondaYamlRepository.existsByName(pythonRunnerEntity.getEnvironment().getCrudTimeVariantDataStructure().getName())) {
+        if (!anacondaYamlRepository.existsById(pythonRunnerEntity.getEnvironment().getCrudTimeVariantDataStructure().getId())) {
             return Optional.empty();
         }
         for (TimeDependentFileEntity timeDependentFileEntity : pythonRunnerEntity.getDependencies()) {
-            if (!fileEntityRepository.existsByName(timeDependentFileEntity.getCrudTimeVariantDataStructure().getName())) {
+            if (!fileEntityRepository.existsById(timeDependentFileEntity.getCrudTimeVariantDataStructure().getId())) {
                 return Optional.empty();
             }
         }

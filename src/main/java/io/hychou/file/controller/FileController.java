@@ -1,10 +1,10 @@
 package io.hychou.file.controller;
 
 import io.hychou.common.MessageResponseEntity;
+import io.hychou.common.datastructure.blob.service.BlobService;
 import io.hychou.common.exception.service.ServiceException;
 import io.hychou.file.entity.FileEntity;
 import io.hychou.file.entity.FileInfo;
-import io.hychou.file.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -20,34 +20,41 @@ import static io.hychou.common.util.TransformUtil.getBytesFrom;
 @RestController
 public class FileController {
 
-    private final FileService fileService;
+    private final BlobService<FileEntity, FileInfo> fileService;
 
     @Autowired
-    public FileController(FileService fileService) {
+    public FileController(BlobService<FileEntity, FileInfo> fileService) {
         this.fileService = fileService;
     }
 
     @GetMapping(RequestMappingPath.ReadAllFileInfo)
-    public MessageResponseEntity readAllFileInfo() {
-        List<FileInfo> fileInfoList = fileService.listFileInfo();
-        return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(fileInfoList);
-    }
-
-    @GetMapping(RequestMappingPath.ReadFileInfoByName)
-    public MessageResponseEntity readFileInfoByName(@PathVariable String name) {
+    public MessageResponseEntity readAllFileInfo(@RequestParam(value = "name", required = false, defaultValue = "") String name) {
+        if (name.isEmpty()) {
+            return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(fileService.listBlobInfo());
+        }
         try {
-            FileInfo fileInfo = fileService.readFileInfoByName(name);
+            List<FileInfo> fileInfo = fileService.readBlobInfoByName(name);
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(fileInfo);
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
         }
     }
 
-    @GetMapping(RequestMappingPath.ReadFileByName)
-    public MessageResponseEntity readFileByName(@PathVariable String name) {
+    @GetMapping(RequestMappingPath.ReadFileInfoById)
+    public MessageResponseEntity readFileInfoById(@PathVariable Long id) {
         try {
-            FileEntity fileEntity = fileService.readFileByName(name);
-            Resource resource = new ByteArrayResource(fileEntity.getFileBytes());
+            FileInfo fileInfo = fileService.readBlobInfoById(id);
+            return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(fileInfo);
+        } catch (ServiceException e) {
+            return e.getMessageResponseEntity();
+        }
+    }
+
+    @GetMapping(RequestMappingPath.ReadFileById)
+    public MessageResponseEntity readFileById(@PathVariable Long id) {
+        try {
+            FileEntity fileEntity = fileService.readBlobById(id);
+            Resource resource = new ByteArrayResource(fileEntity.getBlobBytes());
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).multipartFormData(fileEntity.getName(), resource);
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
@@ -56,31 +63,31 @@ public class FileController {
 
     @PostMapping(value = RequestMappingPath.CreateFileByName,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public MessageResponseEntity createFileByName(@PathVariable String name, @RequestPart("blob") MultipartFile multipartFile) {
+    public MessageResponseEntity createFileByName(@PathVariable String name, @RequestPart("file") MultipartFile multipartFile) {
         try {
             byte[] bytes = getBytesFrom(multipartFile);
-            fileService.createFile(new FileEntity(name, bytes));
+            fileService.createBlob(new FileEntity(name, bytes));
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).build();
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
         }
     }
 
-    @PutMapping(RequestMappingPath.UpdateFileByName)
-    public MessageResponseEntity updateFileByName(@PathVariable String name, @RequestPart("blob") MultipartFile multipartFile) {
+    @PutMapping(RequestMappingPath.UpdateFileById)
+    public MessageResponseEntity updateFileById(@PathVariable Long id, @RequestPart("file") MultipartFile multipartFile) {
         try {
             byte[] bytes = getBytesFrom(multipartFile);
-            fileService.updateFile(new FileEntity(name, bytes));
+            fileService.updateBlobById(id, bytes);
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).build();
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
         }
     }
 
-    @DeleteMapping(RequestMappingPath.DeleteFileByName)
-    public MessageResponseEntity deleteFileByName(@PathVariable String name) {
+    @DeleteMapping(RequestMappingPath.DeleteFileById)
+    public MessageResponseEntity deleteFileById(@PathVariable Long id) {
         try {
-            fileService.deleteFileByName(name);
+            fileService.deleteBlobById(id);
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).build();
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();

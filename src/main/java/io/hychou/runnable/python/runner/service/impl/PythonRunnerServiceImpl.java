@@ -5,13 +5,14 @@ import io.hychou.common.exception.service.clienterror.ElementNotExistException;
 import io.hychou.common.exception.service.clienterror.NullParameterException;
 import io.hychou.file.dao.FileEntityRepository;
 import io.hychou.file.entity.FileEntity;
+import io.hychou.runnable.timedependent.entity.TimeDependentEntity;
 import io.hychou.runnable.python.anacondayaml.dao.AnacondaYamlRepository;
 import io.hychou.runnable.python.runner.dao.PythonRunnerRepository;
 import io.hychou.runnable.python.runner.entity.PythonRunnerEntity;
 import io.hychou.runnable.python.runner.entity.PythonRunnerInfo;
 import io.hychou.runnable.python.runner.service.PythonRunnerService;
-import io.hychou.runnable.timedependent.entity.TimeDependentEntity;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
 public class PythonRunnerServiceImpl implements PythonRunnerService {
@@ -116,16 +120,19 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
 
         // CrudRepository seems don't have good support for selecting by set/list comparison
         // So we select by some composite columns and then do the set/list comparison manually
-        List<PythonRunnerEntity> theSamePythonRunnerEntities =
+        List<PythonRunnerEntity> theSamePythonRunnerEntitiesExceptDependencies =
                 pythonRunnerRepository.findByPythonCode_TimeVariantDataAndEnvironment_TimeVariantData(
                         pythonRunnerEntity.getPythonCode().getTimeVariantData(),
                         pythonRunnerEntity.getEnvironment().getTimeVariantData());
-        for (PythonRunnerEntity theSamePythonRunnerEntity : theSamePythonRunnerEntities) {
-            if (theSamePythonRunnerEntity.getDependencies().size() != pythonRunnerEntity.getDependencies().size() ||
-                    !theSamePythonRunnerEntity.getDependencies().containsAll(pythonRunnerEntity.getDependencies()) ||
-                    !pythonRunnerEntity.getDependencies().containsAll(theSamePythonRunnerEntity.getDependencies())) {
-                continue;
-            }
+        for (PythonRunnerEntity theSamePythonRunnerEntity : theSamePythonRunnerEntitiesExceptDependencies
+                .stream()
+                .filter(pythonRunner ->
+                        pythonRunner.getDependencies().size() == pythonRunnerEntity.getDependencies().size() &&
+                                pythonRunner.getDependencies().stream().map(TimeDependentEntity::getTimeVariantData).collect(Collectors.toSet()).containsAll(
+                                        pythonRunnerEntity.getDependencies().stream().map(TimeDependentEntity::getTimeVariantData).collect(Collectors.toSet())) &&
+                                pythonRunnerEntity.getDependencies().stream().map(TimeDependentEntity::getTimeVariantData).collect(Collectors.toSet()).containsAll(
+                                        pythonRunner.getDependencies().stream().map(TimeDependentEntity::getTimeVariantData).collect(Collectors.toSet())))
+                .collect(Collectors.toList())) {
 
             // following if statements check whether the used files/env is the same as before
             // if not, delete the old python runner and continue check the next one

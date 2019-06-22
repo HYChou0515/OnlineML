@@ -4,7 +4,6 @@ import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.ObjectUtils;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -28,8 +27,7 @@ public class MessageResponseEntity<T> extends ResponseEntity<T> {
     private static HttpStatus toStatusCode(Object status) {
         if (status instanceof HttpStatus) {
             return (HttpStatus) status;
-        }
-        else {
+        } else {
             return HttpStatus.valueOf((Integer) status);
         }
     }
@@ -84,7 +82,8 @@ public class MessageResponseEntity<T> extends ResponseEntity<T> {
 
         /**
          * Add the given, single header value under the given name.
-         * @param headerName the header name
+         *
+         * @param headerName   the header name
          * @param headerValues the header value(s)
          * @return this builder
          * @see HttpHeaders#add(String, String)
@@ -212,7 +211,7 @@ public class MessageResponseEntity<T> extends ResponseEntity<T> {
         public <T> MessageResponseEntity<T> multipartFormData(String filename, T body) {
             return this.contentType(MediaType.MULTIPART_FORM_DATA)
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\""+filename+"\"")
+                            "attachment; filename=\"" + filename + "\"")
                     .body(body);
         }
 

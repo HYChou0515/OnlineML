@@ -7,12 +7,15 @@ public class NullParameterException extends ServiceException {
     public NullParameterException() {
         super();
     }
+
     public NullParameterException(String message) {
         super(message);
     }
+
     public NullParameterException(String message, Throwable cause) {
-        super(message,cause);
+        super(message, cause);
     }
+
     public NullParameterException(Throwable cause) {
         super(cause);
     }

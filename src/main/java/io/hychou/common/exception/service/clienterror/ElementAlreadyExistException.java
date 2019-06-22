@@ -7,12 +7,15 @@ public class ElementAlreadyExistException extends ServiceException {
     public ElementAlreadyExistException() {
         super();
     }
+
     public ElementAlreadyExistException(String message) {
         super(message);
     }
+
     public ElementAlreadyExistException(String message, Throwable cause) {
-        super(message,cause);
+        super(message, cause);
     }
+
     public ElementAlreadyExistException(Throwable cause) {
         super(cause);
     }

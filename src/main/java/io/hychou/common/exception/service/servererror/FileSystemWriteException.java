@@ -7,12 +7,15 @@ public class FileSystemWriteException extends ServiceException {
     public FileSystemWriteException() {
         super();
     }
+
     public FileSystemWriteException(String message) {
         super(message);
     }
+
     public FileSystemWriteException(String message, Throwable cause) {
-        super(message,cause);
+        super(message, cause);
     }
+
     public FileSystemWriteException(Throwable cause) {
         super(cause);
     }

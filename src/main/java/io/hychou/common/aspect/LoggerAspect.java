@@ -18,50 +18,9 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Component
 public class LoggerAspect {
 
-    private static final String SERVICE_LAYER="SERVICE";
-    private static final String CONTROLLER_LAYER="CONTROLLER";
-    private static final String DAO_LAYER="DAO";
-
-    @Around("execution(* io.hychou..service.impl.*ServiceImpl.*(..))")
-    public Object serviceLogMethod(final ProceedingJoinPoint joinPoint)
-            throws Throwable {
-        return logMethod(joinPoint, SERVICE_LAYER);
-    }
-
-    @Around("execution(* io.hychou..controller.*Controller.*(..))")
-    public Object controllerLogMethod(final ProceedingJoinPoint joinPoint)
-            throws Throwable {
-        return logMethod(joinPoint, CONTROLLER_LAYER);
-    }
-
-    @Around("execution(* io.hychou..dao.*Repository.*(..))")
-        public Object DaoLogMethod(final ProceedingJoinPoint joinPoint)
-            throws Throwable {
-            return logMethod(joinPoint, DAO_LAYER);
-    }
-
-
-    private Object logMethod(final ProceedingJoinPoint joinPoint, String layer)
-            throws Throwable {
-        final Class<?> targetClass = joinPoint.getTarget().getClass();
-        final Logger logger = getLogger(targetClass);
-        try {
-            final String className = targetClass.getSimpleName();
-            logger.info(getPreMessage(joinPoint, className, layer));
-            final StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
-            final Object retVal = joinPoint.proceed();
-            stopWatch.stop();
-            logger.info(getPostMessage(joinPoint, className, layer, stopWatch.getTotalTimeMillis()));
-            return retVal;
-        } catch ( final ServiceException ex) {
-            logger.warn(getErrorMessage(ex));
-            throw ex;
-        } catch ( final Throwable ex ) {
-            logger.error(getErrorMessage(ex), ex);
-            throw ex;
-        }
-    }
+    private static final String SERVICE_LAYER = "SERVICE";
+    private static final String CONTROLLER_LAYER = "CONTROLLER";
+    private static final String DAO_LAYER = "DAO";
 
     private static String getPreMessage(final JoinPoint joinPoint, final String className, final String layer) {
         final StringBuilder builder = new StringBuilder()
@@ -89,14 +48,14 @@ public class LoggerAspect {
 
     private static void appendTo(final StringBuilder builder, final JoinPoint joinPoint) {
         final Object[] args = joinPoint.getArgs();
-        for ( int i = 0; i < args.length; i++ ) {
-            if ( i != 0 ) {
+        for (int i = 0; i < args.length; i++) {
+            if (i != 0) {
                 builder.append(", ");
             }
 
             String argClassName;
             try {
-                argClassName = args[i].getClass().getSimpleName()+" ";
+                argClassName = args[i].getClass().getSimpleName() + " ";
             } catch (Exception e) {
                 argClassName = "";
             }
@@ -120,8 +79,48 @@ public class LoggerAspect {
         if (arg instanceof boolean[]) len = ((boolean[]) arg).length;
         if (arg instanceof Object[]) len = ((Object[]) arg).length;
 
-        if(len != null) {
+        if (len != null) {
             builder.append("(length=").append(len).append(")");
+        }
+    }
+
+    @Around("execution(* io.hychou..service.impl.*ServiceImpl.*(..))")
+    public Object serviceLogMethod(final ProceedingJoinPoint joinPoint)
+            throws Throwable {
+        return logMethod(joinPoint, SERVICE_LAYER);
+    }
+
+    @Around("execution(* io.hychou..controller.*Controller.*(..))")
+    public Object controllerLogMethod(final ProceedingJoinPoint joinPoint)
+            throws Throwable {
+        return logMethod(joinPoint, CONTROLLER_LAYER);
+    }
+
+    @Around("execution(* io.hychou..dao.*Repository.*(..))")
+    public Object DaoLogMethod(final ProceedingJoinPoint joinPoint)
+            throws Throwable {
+        return logMethod(joinPoint, DAO_LAYER);
+    }
+
+    private Object logMethod(final ProceedingJoinPoint joinPoint, String layer)
+            throws Throwable {
+        final Class<?> targetClass = joinPoint.getTarget().getClass();
+        final Logger logger = getLogger(targetClass);
+        try {
+            final String className = targetClass.getSimpleName();
+            logger.info(getPreMessage(joinPoint, className, layer));
+            final StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            final Object retVal = joinPoint.proceed();
+            stopWatch.stop();
+            logger.info(getPostMessage(joinPoint, className, layer, stopWatch.getTotalTimeMillis()));
+            return retVal;
+        } catch (final ServiceException ex) {
+            logger.warn(getErrorMessage(ex));
+            throw ex;
+        } catch (final Throwable ex) {
+            logger.error(getErrorMessage(ex), ex);
+            throw ex;
         }
     }
 

@@ -7,12 +7,15 @@ public class FileSystemReadException extends ServiceException {
     public FileSystemReadException() {
         super();
     }
+
     public FileSystemReadException(String message) {
         super(message);
     }
+
     public FileSystemReadException(String message, Throwable cause) {
-        super(message,cause);
+        super(message, cause);
     }
+
     public FileSystemReadException(Throwable cause) {
         super(cause);
     }

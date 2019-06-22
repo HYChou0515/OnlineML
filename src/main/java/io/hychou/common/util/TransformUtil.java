@@ -25,7 +25,7 @@ public class TransformUtil {
         assert Objects.nonNull(listB);
         assert listA.size() == listB.size() : "merged to lists must have same size";
         List<Pair> list = new ArrayList<>();
-        for(int i = 0; i < listA.size(); i++) {
+        for (int i = 0; i < listA.size(); i++) {
             list.add(Pair.of(listA.get(i), listB.get(i)));
         }
         return list;

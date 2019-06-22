@@ -12,14 +12,14 @@ public class SignificantField {
     }
 
     public String getName() {
-        if(name == null){
+        if (name == null) {
             return Constant.NULL_STRING;
         }
         return name;
     }
 
     public Object getField() {
-        if(field == null){
+        if (field == null) {
             return Constant.NULL_STRING;
         }
         return field;
@@ -29,7 +29,7 @@ public class SignificantField {
     public boolean equals(Object aThat) {
         if (this == aThat) return true;
         if (null == aThat) return false;
-        if ( aThat.getClass() != this.getClass()) return false;
+        if (aThat.getClass() != this.getClass()) return false;
         SignificantField that = (SignificantField) aThat;
         return Objects.equals(this.getName(), that.getName()) &&
                 Objects.equals(this.getField(), that.getField());

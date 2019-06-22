@@ -7,12 +7,15 @@ public class ServerIOException extends ServiceException {
     public ServerIOException() {
         super();
     }
+
     public ServerIOException(String message) {
         super(message);
     }
+
     public ServerIOException(String message, Throwable cause) {
-        super(message,cause);
+        super(message, cause);
     }
+
     public ServerIOException(Throwable cause) {
         super(cause);
     }

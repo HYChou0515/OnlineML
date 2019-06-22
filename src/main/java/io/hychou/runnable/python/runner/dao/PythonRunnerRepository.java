@@ -8,12 +8,13 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface PythonRunnerRepository extends CrudRepository<PythonRunnerEntity, Long> {
     List<PythonRunnerInfo> findPythonRunnerInfoBy();
 
     Optional<PythonRunnerInfo> findPythonRunnerInfoById(Long id);
 
-    List<PythonRunnerEntity> findByPythonCode_TimeVariantDataAndEnvironment_TimeVariantData(
-            FileEntity pythonCode, AnacondaYamlEntity environment);
+    List<PythonRunnerEntity> findByPythonCode_TimeVariantDataAndEnvironment_TimeVariantDataAndDependencies_TimeVariantData(
+            FileEntity pythonCode, AnacondaYamlEntity environment, Set<FileEntity> dependencies);
 }

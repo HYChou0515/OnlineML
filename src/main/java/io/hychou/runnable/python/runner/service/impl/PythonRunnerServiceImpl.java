@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -118,21 +119,20 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
             }
         }
 
-        // CrudRepository seems don't have good support for selecting by set/list comparison
-        // So we select by some composite columns and then do the set/list comparison manually
-        List<PythonRunnerEntity> theSamePythonRunnerEntitiesExceptDependencies =
-                pythonRunnerRepository.findByPythonCode_TimeVariantDataAndEnvironment_TimeVariantData(
+        // in default CrudRepository, a set is null if it is empty
+        // and anEmptySet.equals(null) return false
+        // To have a desired behavior, we query null if the set is empty
+        Set<FileEntity> queryDependencies = pythonRunnerEntity.getDependencies().stream().map(TimeDependentEntity::getTimeVariantData).collect(Collectors.toSet());
+        if(queryDependencies.isEmpty()) {
+            queryDependencies = null;
+        }
+        List<PythonRunnerEntity> theSamePythonRunnerEntities =
+                pythonRunnerRepository.findByPythonCode_TimeVariantDataAndEnvironment_TimeVariantDataAndDependencies_TimeVariantData(
                         pythonRunnerEntity.getPythonCode().getTimeVariantData(),
-                        pythonRunnerEntity.getEnvironment().getTimeVariantData());
-        for (PythonRunnerEntity theSamePythonRunnerEntity : theSamePythonRunnerEntitiesExceptDependencies
-                .stream()
-                .filter(pythonRunner ->
-                        pythonRunner.getDependencies().size() == pythonRunnerEntity.getDependencies().size() &&
-                                pythonRunner.getDependencies().stream().map(TimeDependentEntity::getTimeVariantData).collect(Collectors.toSet()).containsAll(
-                                        pythonRunnerEntity.getDependencies().stream().map(TimeDependentEntity::getTimeVariantData).collect(Collectors.toSet())) &&
-                                pythonRunnerEntity.getDependencies().stream().map(TimeDependentEntity::getTimeVariantData).collect(Collectors.toSet()).containsAll(
-                                        pythonRunner.getDependencies().stream().map(TimeDependentEntity::getTimeVariantData).collect(Collectors.toSet())))
-                .collect(Collectors.toList())) {
+                        pythonRunnerEntity.getEnvironment().getTimeVariantData(),
+                        queryDependencies);
+        
+        for (PythonRunnerEntity theSamePythonRunnerEntity : theSamePythonRunnerEntities) {
 
             // following if statements check whether the used files/env is the same as before
             // if not, delete the old python runner and continue check the next one

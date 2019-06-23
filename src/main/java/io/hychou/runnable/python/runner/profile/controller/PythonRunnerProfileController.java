@@ -60,7 +60,7 @@ public class PythonRunnerProfileController {
 
     @PostMapping(RequestMappingPath.CreatePythonRunnerProfile)
     public MessageResponseEntity createPythonRunnerProfile(@PathVariable Long pythonCodeId,
-                                                           @PathVariable Long environmentId,
+                                                           @RequestParam(required = false, defaultValue = EMPTY_STRING) Long environmentId,
                                                            @RequestParam(value = "dependenciesIds[]", required = false, defaultValue = EMPTY_STRING) Long[] dependenciesIds) {
         try {
             FileEntity pythonCode = fileService.readBlobById(pythonCodeId);

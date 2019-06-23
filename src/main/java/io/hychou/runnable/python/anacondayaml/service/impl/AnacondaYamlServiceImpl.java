@@ -4,37 +4,68 @@ import io.hychou.common.datastructure.blob.dao.BlobRepository;
 import io.hychou.common.datastructure.blob.entity.BlobEntity;
 import io.hychou.common.datastructure.blob.service.impl.BlobServiceImpl;
 import io.hychou.common.exception.service.ServiceException;
+import io.hychou.common.exception.service.clienterror.ElementNotExistException;
 import io.hychou.common.exception.service.clienterror.NullParameterException;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlInfo;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+import static io.hychou.common.Constant.EMPTY_STRING;
+import static io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity.DEFAULT_ANACONDA_YAML_ENTITY;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
 public class AnacondaYamlServiceImpl extends BlobServiceImpl<AnacondaYamlEntity, AnacondaYamlInfo> {
+
+    private final Logger logger = getLogger(this.getClass());
+    private Long defaultAnacondaYamlEntityId;
+
     public AnacondaYamlServiceImpl(BlobRepository<AnacondaYamlEntity, AnacondaYamlInfo> blobRepository) {
         super(blobRepository);
+        try {
+            defaultAnacondaYamlEntityId = createBlob(DEFAULT_ANACONDA_YAML_ENTITY).getId();
+        } catch (ServiceException e) {
+            defaultAnacondaYamlEntityId = null;
+            logger.error(e.getMessage());
+        }
+
+    }
+
+    @Override
+    public AnacondaYamlInfo readBlobInfoById(Long id) throws ServiceException {
+        if (id == null) {
+            id = defaultAnacondaYamlEntityId;
+        }
+        return super.readBlobInfoById(id);
+    }
+
+    @Override
+    public AnacondaYamlEntity readBlobById(Long id) throws ServiceException {
+        if (id == null) {
+            id = defaultAnacondaYamlEntityId;
+        }
+        return super.readBlobById(id);
     }
 
     @Override
     public AnacondaYamlEntity createBlob(AnacondaYamlEntity anacondaYamlEntity) throws ServiceException {
-        if (anacondaYamlEntity == null || anacondaYamlEntity.getName() == null || anacondaYamlEntity.getBlobBytes() == null) {
+        if (anacondaYamlEntity == null || anacondaYamlEntity.getBlobBytes() == null) {
             throw new NullParameterException(new BlobEntity().getStringCreateNull());
         }
         checkIsValidAnacondaYaml(anacondaYamlEntity.getBlobBytes());
-        anacondaYamlEntity = getBlobRepository().save(anacondaYamlEntity);
-        return anacondaYamlEntity;
+        return super.createBlob(anacondaYamlEntity);
     }
 
     @Override
     public AnacondaYamlEntity updateBlobById(Long id, byte[] bytes) throws ServiceException {
-        if (id == null || bytes == null) {
+        if (bytes == null) {
             throw new NullParameterException(new BlobEntity().getStringUpdateNull());
         }
         checkIsValidAnacondaYaml(bytes);
-        AnacondaYamlEntity anacondaYamlEntity = readBlobById(id);
-        anacondaYamlEntity.setBlobBytes(bytes);
-        anacondaYamlEntity = getBlobRepository().save(anacondaYamlEntity);
-        return anacondaYamlEntity;
+        return super.updateBlobById(id, bytes);
     }
 
     //TODO: Use dry run to check the yaml is valid after the feature released in Anaconda 4.7

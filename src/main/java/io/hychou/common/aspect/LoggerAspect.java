@@ -11,6 +11,7 @@ import org.springframework.util.StopWatch;
 
 import java.util.Collection;
 
+import static io.hychou.common.Constant.EMPTY_STRING;
 import static org.slf4j.LoggerFactory.getLogger;
 
 
@@ -21,6 +22,7 @@ public class LoggerAspect {
     private static final String SERVICE_LAYER = "SERVICE";
     private static final String CONTROLLER_LAYER = "CONTROLLER";
     private static final String DAO_LAYER = "DAO";
+    private static final String ENTITY_LAYER = "ENTITY";
 
     private static String getPreMessage(final JoinPoint joinPoint, final String className, final String layer) {
         final StringBuilder builder = new StringBuilder()
@@ -57,7 +59,7 @@ public class LoggerAspect {
             try {
                 argClassName = args[i].getClass().getSimpleName() + " ";
             } catch (Exception e) {
-                argClassName = "";
+                argClassName = EMPTY_STRING;
             }
             builder.append(argClassName)
                     .append(args[i]);
@@ -100,6 +102,12 @@ public class LoggerAspect {
     public Object DaoLogMethod(final ProceedingJoinPoint joinPoint)
             throws Throwable {
         return logMethod(joinPoint, DAO_LAYER);
+    }
+
+    @Around("execution(* io.hychou..entity.*Entity.*(..))")
+    public Object EntityLogMethod(final ProceedingJoinPoint joinPoint)
+            throws Throwable {
+        return logMethod(joinPoint, ENTITY_LAYER);
     }
 
     private Object logMethod(final ProceedingJoinPoint joinPoint, String layer)

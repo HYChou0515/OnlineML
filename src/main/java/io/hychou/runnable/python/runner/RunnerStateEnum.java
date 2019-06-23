@@ -5,5 +5,6 @@ public enum RunnerStateEnum {
     PREPARING,
     RUNNING,
     CLEANING,
-    FINISHED
+    FINISHED,
+    CRASHED
 }

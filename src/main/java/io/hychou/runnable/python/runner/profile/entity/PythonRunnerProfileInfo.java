@@ -1,4 +1,4 @@
-package io.hychou.runnable.python.runner.entity;
+package io.hychou.runnable.python.runner.profile.entity;
 
 import io.hychou.file.entity.FileInfo;
 import io.hychou.runnable.python.runner.RunnerStateEnum;
@@ -7,7 +7,7 @@ import io.hychou.runnable.timedependent.entity.TimeDependentInfo;
 import java.util.Date;
 import java.util.List;
 
-public interface PythonRunnerInfo {
+public interface PythonRunnerProfileInfo {
     Long getId();
 
     TimeDependentInfo getPythonCode();

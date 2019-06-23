@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static io.hychou.common.Constant.EMPTY_STRING;
 import static io.hychou.common.Constant.SUCCESS_MESSAGE;
 import static io.hychou.common.util.TransformUtil.getBytesFrom;
 
@@ -28,7 +29,7 @@ public class AnacondaYamlController {
     }
 
     @GetMapping(RequestMappingPath.ReadAllAnacondaYamlInfo)
-    public MessageResponseEntity readAllAnacondaYamlInfo(@RequestParam(value = "name", required = false, defaultValue = "") String name) {
+    public MessageResponseEntity readAllAnacondaYamlInfo(@RequestParam(value = "name", required = false, defaultValue = EMPTY_STRING) String name) {
         if (name.isEmpty()) {
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(anacondaYamlService.listBlobInfo());
         }

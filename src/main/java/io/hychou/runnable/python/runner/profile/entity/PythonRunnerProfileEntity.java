@@ -1,5 +1,6 @@
-package io.hychou.runnable.python.runner.entity;
+package io.hychou.runnable.python.runner.profile.entity;
 
+import io.hychou.common.Constant;
 import io.hychou.common.SignificantField;
 import io.hychou.common.datastructure.AbstractCrudDataStructure;
 import io.hychou.file.entity.FileEntity;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-public class PythonRunnerEntity extends AbstractCrudDataStructure {
+public class PythonRunnerProfileEntity extends AbstractCrudDataStructure {
     @Id
     @GeneratedValue
     @Getter
@@ -41,11 +42,13 @@ public class PythonRunnerEntity extends AbstractCrudDataStructure {
 
     @Getter
     @Setter
+    @Column(length = Constant.MB)
     private String summary;
 
     @Getter
     @Setter
     @ElementCollection
+    @Column(length = Constant.MB)
     private List<String> errorMessages;
 
     @Getter
@@ -66,13 +69,13 @@ public class PythonRunnerEntity extends AbstractCrudDataStructure {
     @Getter
     private Date finishedTimestamp;
 
-    public PythonRunnerEntity() {
+    public PythonRunnerProfileEntity() {
         state = RunnerStateEnum.CREATED;
         createdTimestamp = new Date();
         errorMessages = new ArrayList<>();
     }
 
-    public PythonRunnerEntity(FileEntity pythonCode, List<FileEntity> dependencies, AnacondaYamlEntity environment) {
+    public PythonRunnerProfileEntity(FileEntity pythonCode, List<FileEntity> dependencies, AnacondaYamlEntity environment) {
         this();
         this.pythonCode = new TimeDependentEntity<>(pythonCode);
         this.dependencies = new HashSet<>();
@@ -102,8 +105,17 @@ public class PythonRunnerEntity extends AbstractCrudDataStructure {
         this.state = RunnerStateEnum.FINISHED;
     }
 
+    public void toCrashedState() {
+        this.finishedTimestamp = new Date();
+        this.state = RunnerStateEnum.CRASHED;
+    }
+
     public void addErrorMessage(String errorMessage) {
         this.errorMessages.add("Error on state=" + this.state + ", " + errorMessage);
+    }
+
+    public boolean isFinished() {
+        return state == RunnerStateEnum.FINISHED;
     }
 
     @Override

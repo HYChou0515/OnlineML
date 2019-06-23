@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.hychou.common.Constant.*;
+import static io.hychou.common.Constant.EMPTY_STRING;
+import static io.hychou.common.Constant.SUCCESS_MESSAGE;
 
 @RestController
 public class PythonRunnerProfileController {

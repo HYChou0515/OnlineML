@@ -32,10 +32,9 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
     private final TaskExecutor mainTaskExecutor;
     private final TaskExecutor stdoutStreamGobblerExecutor;
     private final TaskExecutor stderrStreamGobblerExecutor;
-
+    private final Logger logger = getLogger(this.getClass());
     private PythonRunnerProfileEntity pythonRunnerProfileEntity;
     private PythonRunnerProfileRepository pythonRunnerProfileRepository;
-    private final Logger logger = getLogger(this.getClass());
 
     public PythonRunnerServiceImpl(@Qualifier("threadPoolTaskExecutor") TaskExecutor mainTaskExecutor,
                                    @Qualifier("threadPoolTaskExecutor") TaskExecutor stdoutStreamGobblerExecutor,
@@ -121,7 +120,7 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
                 pythonRunnerProfileEntity.addErrorMessage(String.format("Process exit with error code: %d", process.exitValue()));
             }
 
-            for(String stderr : stderrList) {
+            for (String stderr : stderrList) {
                 pythonRunnerProfileEntity.addErrorMessage(stderr);
             }
             pythonRunnerProfileEntity.setSummary(stdoutJoiner.toString());

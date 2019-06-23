@@ -15,7 +15,7 @@ import java.util.Optional;
 public class BlobServiceImpl<BLOB extends BlobEntity, INFO> implements BlobService<BLOB, INFO> {
     protected static final String ID_STRING = "id";
     protected static final String NAME_STRING = "name";
-    protected static final String CREATE_EMPTY_NAME="Trying to create blob with empty name";
+    protected static final String CREATE_EMPTY_NAME = "Trying to create blob with empty name";
 
     @Getter
     protected final BlobRepository<BLOB, INFO> blobRepository;

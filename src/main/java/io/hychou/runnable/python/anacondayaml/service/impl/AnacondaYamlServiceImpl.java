@@ -4,16 +4,12 @@ import io.hychou.common.datastructure.blob.dao.BlobRepository;
 import io.hychou.common.datastructure.blob.entity.BlobEntity;
 import io.hychou.common.datastructure.blob.service.impl.BlobServiceImpl;
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.clienterror.ElementNotExistException;
 import io.hychou.common.exception.service.clienterror.NullParameterException;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlInfo;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
-import static io.hychou.common.Constant.EMPTY_STRING;
 import static io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity.DEFAULT_ANACONDA_YAML_ENTITY;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -68,7 +64,6 @@ public class AnacondaYamlServiceImpl extends BlobServiceImpl<AnacondaYamlEntity,
         return super.updateBlobById(id, bytes);
     }
 
-    //TODO: Use dry run to check the yaml is valid after the feature released in Anaconda 4.7
     private void checkIsValidAnacondaYaml(byte[] bytes) throws ServiceException {
 //        try {
 //

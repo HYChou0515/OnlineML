@@ -116,7 +116,7 @@ public class PythonRunnerProfileServiceImpl implements PythonRunnerProfileServic
         // and anEmptySet.equals(null) return false
         // To have a desired behavior, we query null if the set is empty
         Set<FileEntity> queryDependencies = pythonRunnerProfileEntity.getDependencies().stream().map(TimeDependentEntity::getTimeVariantData).collect(Collectors.toSet());
-        if(queryDependencies.isEmpty()) {
+        if (queryDependencies.isEmpty()) {
             queryDependencies = null;
         }
         List<PythonRunnerProfileEntity> theSamePythonRunnerProfileEntities =

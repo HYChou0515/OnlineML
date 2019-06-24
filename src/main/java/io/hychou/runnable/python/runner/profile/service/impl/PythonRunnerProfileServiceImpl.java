@@ -1,8 +1,8 @@
 package io.hychou.runnable.python.runner.profile.service.impl;
 
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.clienterror.ElementNotExistException;
-import io.hychou.common.exception.service.clienterror.NullParameterException;
+import io.hychou.common.exception.service.client.ElementNotExistException;
+import io.hychou.common.exception.service.client.NullParameterException;
 import io.hychou.file.dao.FileEntityRepository;
 import io.hychou.file.entity.FileEntity;
 import io.hychou.runnable.python.anacondayaml.dao.AnacondaYamlRepository;
@@ -12,7 +12,6 @@ import io.hychou.runnable.python.runner.profile.entity.PythonRunnerProfileInfo;
 import io.hychou.runnable.python.runner.profile.service.PythonRunnerProfileService;
 import io.hychou.runnable.python.runner.service.PythonRunnerService;
 import io.hychou.runnable.timedependent.entity.TimeDependentEntity;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,9 +26,6 @@ public class PythonRunnerProfileServiceImpl implements PythonRunnerProfileServic
     private final FileEntityRepository fileEntityRepository;
     private final AnacondaYamlRepository anacondaYamlRepository;
     private final PythonRunnerService pythonRunner;
-
-    @Value("${workdirectory}")
-    private String runnableBaseDirectory;
 
     public PythonRunnerProfileServiceImpl(PythonRunnerProfileRepository pythonRunnerProfileRepository,
                                           FileEntityRepository fileEntityRepository,
@@ -84,7 +80,7 @@ public class PythonRunnerProfileServiceImpl implements PythonRunnerProfileServic
             return theSameEntity.get();
         }
         pythonRunnerProfileEntity = pythonRunnerProfileRepository.save(pythonRunnerProfileEntity);
-        pythonRunner.run(pythonRunnerProfileEntity, pythonRunnerProfileRepository);
+        pythonRunner.run(pythonRunnerProfileEntity);
         return pythonRunnerProfileEntity;
     }
 

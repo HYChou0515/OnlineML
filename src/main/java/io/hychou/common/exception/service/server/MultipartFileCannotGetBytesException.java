@@ -1,4 +1,4 @@
-package io.hychou.common.exception.service.servererror;
+package io.hychou.common.exception.service.server;
 
 import io.hychou.common.exception.service.ServiceException;
 import org.springframework.http.HttpStatus;

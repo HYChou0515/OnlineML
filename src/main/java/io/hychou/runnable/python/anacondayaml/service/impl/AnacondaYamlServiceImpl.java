@@ -4,7 +4,7 @@ import io.hychou.common.datastructure.blob.dao.BlobRepository;
 import io.hychou.common.datastructure.blob.entity.BlobEntity;
 import io.hychou.common.datastructure.blob.service.impl.BlobServiceImpl;
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.clienterror.NullParameterException;
+import io.hychou.common.exception.service.client.NullParameterException;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlInfo;
 import org.slf4j.Logger;

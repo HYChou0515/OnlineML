@@ -4,9 +4,9 @@ import io.hychou.common.datastructure.blob.dao.BlobRepository;
 import io.hychou.common.datastructure.blob.entity.BlobEntity;
 import io.hychou.common.datastructure.blob.service.BlobService;
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.clienterror.ElementNotExistException;
-import io.hychou.common.exception.service.clienterror.IllegalParameterException;
-import io.hychou.common.exception.service.clienterror.NullParameterException;
+import io.hychou.common.exception.service.client.ElementNotExistException;
+import io.hychou.common.exception.service.client.IllegalParameterException;
+import io.hychou.common.exception.service.client.NullParameterException;
 import lombok.Getter;
 
 import java.util.List;

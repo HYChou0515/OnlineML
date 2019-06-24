@@ -1,8 +1,7 @@
 package io.hychou.runnable.python.runner.service;
 
-import io.hychou.runnable.python.runner.profile.dao.PythonRunnerProfileRepository;
 import io.hychou.runnable.python.runner.profile.entity.PythonRunnerProfileEntity;
 
 public interface PythonRunnerService {
-    void run(PythonRunnerProfileEntity pythonRunnerProfileEntity, PythonRunnerProfileRepository pythonRunnerProfileRepository);
+    void run(PythonRunnerProfileEntity pythonRunnerProfileEntity);
 }

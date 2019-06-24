@@ -1,22 +1,22 @@
-package io.hychou.common.exception.service.servererror;
+package io.hychou.common.exception.service.server;
 
 import io.hychou.common.exception.service.ServiceException;
 import org.springframework.http.HttpStatus;
 
-public class OSNotSupportedException extends ServiceException {
-    public OSNotSupportedException() {
+public class FileSystemReadException extends ServiceException {
+    public FileSystemReadException() {
         super();
     }
 
-    public OSNotSupportedException(String message) {
+    public FileSystemReadException(String message) {
         super(message);
     }
 
-    public OSNotSupportedException(String message, Throwable cause) {
+    public FileSystemReadException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public OSNotSupportedException(Throwable cause) {
+    public FileSystemReadException(Throwable cause) {
         super(cause);
     }
 

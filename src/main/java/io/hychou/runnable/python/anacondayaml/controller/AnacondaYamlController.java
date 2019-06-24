@@ -16,7 +16,7 @@ import java.util.List;
 
 import static io.hychou.common.Constant.EMPTY_STRING;
 import static io.hychou.common.Constant.SUCCESS_MESSAGE;
-import static io.hychou.common.util.TransformUtil.getBytesFrom;
+import static io.hychou.common.utilities.TransformUtilities.getBytesFrom;
 
 @RestController
 public class AnacondaYamlController {

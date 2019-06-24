@@ -1,22 +1,22 @@
-package io.hychou.common.exception.service.servererror;
+package io.hychou.common.exception.service.server;
 
 import io.hychou.common.exception.service.ServiceException;
 import org.springframework.http.HttpStatus;
 
-public class FileSystemReadException extends ServiceException {
-    public FileSystemReadException() {
+public class FileSystemWriteException extends ServiceException {
+    public FileSystemWriteException() {
         super();
     }
 
-    public FileSystemReadException(String message) {
+    public FileSystemWriteException(String message) {
         super(message);
     }
 
-    public FileSystemReadException(String message, Throwable cause) {
+    public FileSystemWriteException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public FileSystemReadException(Throwable cause) {
+    public FileSystemWriteException(Throwable cause) {
         super(cause);
     }
 

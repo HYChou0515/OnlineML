@@ -27,7 +27,9 @@ public class PythonRunnerProfileController {
     private final BlobService<AnacondaYamlEntity, AnacondaYamlInfo> anacondaYamlService;
 
     @Autowired
-    public PythonRunnerProfileController(PythonRunnerProfileService pythonRunnerProfileService, BlobService<FileEntity, FileInfo> fileService, BlobService<AnacondaYamlEntity, AnacondaYamlInfo> anacondaYamlService) {
+    public PythonRunnerProfileController(PythonRunnerProfileService pythonRunnerProfileService,
+                                         BlobService<FileEntity, FileInfo> fileService,
+                                         BlobService<AnacondaYamlEntity, AnacondaYamlInfo> anacondaYamlService) {
         this.pythonRunnerProfileService = pythonRunnerProfileService;
         this.fileService = fileService;
         this.anacondaYamlService = anacondaYamlService;

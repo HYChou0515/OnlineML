@@ -7,6 +7,8 @@ import io.hychou.common.datastructure.blob.entity.BlobEntity;
 import io.hychou.common.exception.server.OSNotSupportedException;
 import io.hychou.common.exception.server.ServerException;
 import io.hychou.common.utilities.IOUtilities;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -29,17 +31,18 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Entity
 public class AnacondaYamlEntity extends BlobEntity {
     private final static Logger logger = getLogger(AnacondaYamlEntity.class);
-    public static AnacondaYamlEntity DEFAULT_ANACONDA_YAML_ENTITY = new AnacondaYamlEntity("default_anaconda_yaml", new byte[0]);
-    //    @Value("${java.io.tmpdir}/onlineml/env/")
-    //TODO: make anacondaEnvBaseDir from properties
-    private String anacondaEnvBaseDir = "C:\\Users\\Vito\\AppData\\Local\\Temp\\onlineml\\env";
+
+    @Getter
+    @Setter
+    private String anacondaEnvBaseDir;
 
     public AnacondaYamlEntity() {
         super();
     }
 
-    public AnacondaYamlEntity(String name, byte[] fileBytes) {
+    public AnacondaYamlEntity(String name, byte[] fileBytes, String anacondaEnvBaseDir) {
         super(name, fileBytes);
+        this.anacondaEnvBaseDir = anacondaEnvBaseDir;
     }
 
     public Path getEnvironmentPath() {

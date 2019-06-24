@@ -3,6 +3,7 @@ package io.hychou.runnable.python.anacondayaml.controller;
 import io.hychou.common.MessageResponseEntity;
 import io.hychou.common.datastructure.blob.service.BlobService;
 import io.hychou.common.exception.service.ServiceException;
+import io.hychou.config.RunnablePathProperties;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,12 @@ import static io.hychou.common.utilities.TransformUtilities.getBytesFrom;
 public class AnacondaYamlController {
 
     private final BlobService<AnacondaYamlEntity, AnacondaYamlInfo> anacondaYamlService;
+    private final RunnablePathProperties runnablePathProperties;
 
     @Autowired
-    public AnacondaYamlController(BlobService<AnacondaYamlEntity, AnacondaYamlInfo> anacondaYamlService) {
+    public AnacondaYamlController(BlobService<AnacondaYamlEntity, AnacondaYamlInfo> anacondaYamlService, RunnablePathProperties runnablePathProperties) {
         this.anacondaYamlService = anacondaYamlService;
+        this.runnablePathProperties = runnablePathProperties;
     }
 
     @GetMapping(RequestMappingPath.ReadAllAnacondaYamlInfo)
@@ -67,7 +70,7 @@ public class AnacondaYamlController {
     public MessageResponseEntity createAnacondaYamlByName(@PathVariable String name, @RequestPart("anaconda_yaml") MultipartFile multipartFile) {
         try {
             byte[] bytes = getBytesFrom(multipartFile);
-            AnacondaYamlEntity anacondaYamlEntity = anacondaYamlService.createBlob(new AnacondaYamlEntity(name, bytes));
+            AnacondaYamlEntity anacondaYamlEntity = anacondaYamlService.createBlob(new AnacondaYamlEntity(name, bytes, runnablePathProperties.getAnacondaEnvBaseDir()));
             AnacondaYamlInfo anacondaYamlInfo = anacondaYamlService.readBlobInfoById(anacondaYamlEntity.getId());
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(anacondaYamlInfo);
         } catch (ServiceException e) {

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 public class RunnablePathProperties {
     @Getter
     @Setter
-    private String baseDir;
+    private String baseWorkingDir;
     @Getter
     @Setter
     private String anacondaEnvBaseDir;

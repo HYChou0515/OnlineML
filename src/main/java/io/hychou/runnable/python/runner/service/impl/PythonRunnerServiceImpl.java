@@ -6,6 +6,7 @@ import io.hychou.common.crosssystem.WindowsCommand;
 import io.hychou.common.exception.server.OSNotSupportedException;
 import io.hychou.common.exception.server.ServerException;
 import io.hychou.common.utilities.IOUtilities;
+import io.hychou.config.RunnablePathProperties;
 import io.hychou.file.entity.FileEntity;
 import io.hychou.runnable.python.anacondayaml.dao.AnacondaYamlRepository;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity;
@@ -15,7 +16,6 @@ import io.hychou.runnable.python.runner.service.PythonRunnerService;
 import io.hychou.runnable.timedependent.entity.TimeDependentEntity;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -42,19 +42,20 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
     private final AnacondaYamlRepository anacondaYamlRepository;
     private PythonRunnerProfileEntity pythonRunnerProfileEntity;
 
-    @Value("${path.runnable.base-dir}")
-    private String runnableBaseDirectoryString;
+    private final Path baseWorkingDir;
 
     public PythonRunnerServiceImpl(@Qualifier("threadPoolTaskExecutor") TaskExecutor mainTaskExecutor,
                                    @Qualifier("threadPoolTaskExecutor") TaskExecutor stdoutStreamGobblerExecutor,
                                    @Qualifier("threadPoolTaskExecutor") TaskExecutor stderrStreamGobblerExecutor,
                                    PythonRunnerProfileRepository pythonRunnerProfileRepository,
-                                   AnacondaYamlRepository anacondaYamlRepository) {
+                                   AnacondaYamlRepository anacondaYamlRepository,
+                                   RunnablePathProperties runnablePathProperties) {
         this.mainTaskExecutor = mainTaskExecutor;
         this.stdoutStreamGobblerExecutor = stdoutStreamGobblerExecutor;
         this.stderrStreamGobblerExecutor = stderrStreamGobblerExecutor;
         this.pythonRunnerProfileRepository = pythonRunnerProfileRepository;
         this.anacondaYamlRepository = anacondaYamlRepository;
+        this.baseWorkingDir = Paths.get(runnablePathProperties.getBaseWorkingDir());
     }
 
     public void run(PythonRunnerProfileEntity pythonRunnerProfileEntity) {
@@ -98,9 +99,8 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
 
         private void prepareEnvironment() throws IOException, InterruptedException, ServerException {
             logger.info("Start preparing environment");
-            Path runnableBaseDirectory = Paths.get(runnableBaseDirectoryString);
-            IOUtilities.createDirectory(runnableBaseDirectory, "base runnable");
-            absoluteWorkDirectory = Files.createTempDirectory(runnableBaseDirectory, null);
+            IOUtilities.createDirectory(baseWorkingDir, "base runnable");
+            absoluteWorkDirectory = Files.createTempDirectory(baseWorkingDir, null);
             logger.info("The created temp directory: {}", absoluteWorkDirectory);
             absoluteWorkDirectory.toFile().deleteOnExit();
             pythonRunnerProfileEntity.getPythonCode().getTimeVariantData().writeToFile(absoluteWorkDirectory);
@@ -120,7 +120,6 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
                     new WindowsCommand("cmd.exe", "/c",
                             String.format("%s && python %s",
                                     pythonRunnerProfileEntity.getEnvironment().getTimeVariantData().getCondaActivateCommand(),
-//                                    pythonRunnerProfileEntity.getEnvironment().getTimeVariantData().getEnvironmentPath(),
                                     pythonRunnerProfileEntity.getPythonCode().getTimeVariantData().getName()))
             ).build();
 

@@ -5,35 +5,38 @@ import io.hychou.common.datastructure.blob.entity.BlobEntity;
 import io.hychou.common.datastructure.blob.service.impl.BlobServiceImpl;
 import io.hychou.common.exception.service.ServiceException;
 import io.hychou.common.exception.service.client.NullParameterException;
+import io.hychou.config.RunnablePathProperties;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlInfo;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
-import static io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity.DEFAULT_ANACONDA_YAML_ENTITY;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
 public class AnacondaYamlServiceImpl extends BlobServiceImpl<AnacondaYamlEntity, AnacondaYamlInfo> {
 
     private final Logger logger = getLogger(this.getClass());
-    private Long defaultAnacondaYamlEntityId;
+    private final Long defaultAnacondaYamlEntityId;
 
-    public AnacondaYamlServiceImpl(BlobRepository<AnacondaYamlEntity, AnacondaYamlInfo> blobRepository) {
+    public AnacondaYamlServiceImpl(BlobRepository<AnacondaYamlEntity, AnacondaYamlInfo> blobRepository,
+                                   RunnablePathProperties runnablePathProperties) {
         super(blobRepository);
+        AnacondaYamlEntity defaultAnacondaYamlEntity = new AnacondaYamlEntity("default_anaconda_yaml", new byte[0], runnablePathProperties.getAnacondaEnvBaseDir());
+        Long _defaultAnacondaYamlEntityId;
         try {
-            defaultAnacondaYamlEntityId = createBlob(DEFAULT_ANACONDA_YAML_ENTITY).getId();
+            _defaultAnacondaYamlEntityId = createBlob(defaultAnacondaYamlEntity).getId();
         } catch (ServiceException e) {
-            defaultAnacondaYamlEntityId = null;
+            _defaultAnacondaYamlEntityId = null;
             logger.error(e.getMessage());
         }
-
+        defaultAnacondaYamlEntityId = _defaultAnacondaYamlEntityId;
     }
 
     @Override
     public AnacondaYamlInfo readBlobInfoById(Long id) throws ServiceException {
         if (id == null) {
-            id = defaultAnacondaYamlEntityId;
+            return super.readBlobInfoById(defaultAnacondaYamlEntityId);
         }
         return super.readBlobInfoById(id);
     }
@@ -41,7 +44,7 @@ public class AnacondaYamlServiceImpl extends BlobServiceImpl<AnacondaYamlEntity,
     @Override
     public AnacondaYamlEntity readBlobById(Long id) throws ServiceException {
         if (id == null) {
-            id = defaultAnacondaYamlEntityId;
+            return super.readBlobById(defaultAnacondaYamlEntityId);
         }
         return super.readBlobById(id);
     }

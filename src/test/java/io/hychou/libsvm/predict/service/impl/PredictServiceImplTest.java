@@ -1,15 +1,13 @@
 package io.hychou.libsvm.predict.service.impl;
 
-import io.hychou.common.exception.service.clienterror.IllegalParameterException;
+import io.hychou.common.exception.service.client.IllegalParameterException;
 import io.hychou.data.entity.DataEntity;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.parameter.LibsvmPredictParameterEntity;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -18,11 +16,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import static io.hychou.common.Constant.LIBSVM_DELIMITERS;
-import static io.hychou.common.util.AssertUtils.assertListOfLibsvmTokenEquals;
+import static io.hychou.test.common.util.AssertUtils.assertListOfLibsvmTokenEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class PredictServiceImplTest {
 
     @Autowired
@@ -33,7 +31,7 @@ public class PredictServiceImplTest {
     private ModelEntity probModel;
     private ModelEntity probESvrModel;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         File heartScale = ResourceUtils.getFile("classpath:data/heart_scale");
         File heartScaleDefaultModel = ResourceUtils.getFile("classpath:model/heart_scale_default_model");

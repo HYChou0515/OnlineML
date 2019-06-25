@@ -1,9 +1,9 @@
 package io.hychou.runnable.python.anacondayaml.controller;
 
 import io.hychou.common.MessageResponseEntity;
-import io.hychou.common.datastructure.blob.service.BlobService;
 import io.hychou.common.exception.service.ServiceException;
 import io.hychou.config.RunnablePathProperties;
+import io.hychou.runnable.python.anacondayaml.AnacondaYamlService;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,11 @@ import static io.hychou.common.utilities.TransformUtilities.getBytesFrom;
 @RestController
 public class AnacondaYamlController {
 
-    private final BlobService<AnacondaYamlEntity, AnacondaYamlInfo> anacondaYamlService;
+    private final AnacondaYamlService<AnacondaYamlInfo> anacondaYamlService;
     private final RunnablePathProperties runnablePathProperties;
 
     @Autowired
-    public AnacondaYamlController(BlobService<AnacondaYamlEntity, AnacondaYamlInfo> anacondaYamlService, RunnablePathProperties runnablePathProperties) {
+    public AnacondaYamlController(AnacondaYamlService<AnacondaYamlInfo> anacondaYamlService, RunnablePathProperties runnablePathProperties) {
         this.anacondaYamlService = anacondaYamlService;
         this.runnablePathProperties = runnablePathProperties;
     }

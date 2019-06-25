@@ -1,8 +1,9 @@
 package io.hychou.data.entity;
 
-import io.hychou.common.DataStructureTest;
-import org.junit.Before;
-import org.junit.Test;
+import io.hychou.test.common.DataStructureTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -11,12 +12,14 @@ import java.util.StringJoiner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+@SpringBootTest
 public class DataPointTest extends DataStructureTest {
 
     private DataPoint d1;
     private String d1ToString = "DataPoint{y=1.0, x=[IndexValue{index=2, value=3.0}, IndexValue{index=5, value=6.0}]}";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         d1 = new DataPoint();
         d1.setY(1.0);

@@ -3,7 +3,7 @@ buildscript {
         maven { url 'http://repo1.maven.org/maven2' }
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.4.RELEASE")
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.4.RELEASE"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7"
     }
 }
@@ -61,12 +61,19 @@ dependencies {
     compile group: 'tw.edu.ntu.csie', name: 'libsvm', version: '3.23'
     compile group: 'commons-io', name: 'commons-io', version: '2.4'
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
     compile group: 'org.yaml', name: 'snakeyaml', version: '1.24'
     compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
 
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.0.RELEASE'
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'
-
+    // Test
+    testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.0.RELEASE') {
+        exclude group: 'junit', module: 'junit' //excluding junit4
+    }
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.2.0')
+    testCompile('org.junit.jupiter:junit-jupiter-params:5.2.0')
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.2.0')
+    testCompile "org.mockito:mockito-core:2.+"
+    testCompile('org.mockito:mockito-junit-jupiter:2.18.3')
 }
 
 jacoco {
@@ -88,6 +95,7 @@ jacocoTestReport {
 }
 
 test {
+    useJUnitPlatform()
     afterTest { desc, result ->
         logger.quiet "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
     }

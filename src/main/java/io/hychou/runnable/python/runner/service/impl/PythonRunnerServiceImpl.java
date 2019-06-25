@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -81,20 +82,25 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
                 cleanEnvironment();
                 pythonRunnerProfileEntity.toFinishedState();
                 pythonRunnerProfileEntity = pythonRunnerProfileRepository.save(pythonRunnerProfileEntity);
-            } catch (ServiceException | ServerException | InterruptedException | IOException e) {
-                StringWriter stringWriter = new StringWriter();
-                e.printStackTrace(new PrintWriter(stringWriter));
-                pythonRunnerProfileEntity.addErrorMessage(stringWriter.toString());
-                pythonRunnerProfileEntity.toCrashedState();
-                pythonRunnerProfileEntity = pythonRunnerProfileRepository.save(pythonRunnerProfileEntity);
+            } catch (ServiceException | ServerException | IOException e) {
+                handlePythonRunnerProfileWhileException(e);
+            } catch (InterruptedException e) {
+                handlePythonRunnerProfileWhileException(e);
+                logger.warn("Current thread is interrupted", e);
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
-                pythonRunnerProfileEntity.toCrashedState();
-                pythonRunnerProfileEntity = pythonRunnerProfileRepository.save(pythonRunnerProfileEntity);
-                StringWriter stringWriter = new StringWriter();
-                e.printStackTrace(new PrintWriter(stringWriter));
-                pythonRunnerProfileEntity.addErrorMessage(stringWriter.toString());
+                handlePythonRunnerProfileWhileException(e);
                 throw e;
             }
+        }
+
+        private void handlePythonRunnerProfileWhileException(Exception e) {
+            pythonRunnerProfileEntity.toCrashedState();
+            pythonRunnerProfileEntity = pythonRunnerProfileRepository.save(pythonRunnerProfileEntity);
+            StringWriter stringWriter = new StringWriter();
+            e.printStackTrace(new PrintWriter(stringWriter));
+            pythonRunnerProfileEntity.addErrorMessage(stringWriter.toString());
+            pythonRunnerProfileEntity = pythonRunnerProfileRepository.save(pythonRunnerProfileEntity);
         }
 
         private void prepareEnvironment() throws IOException, InterruptedException, ServerException {
@@ -145,24 +151,23 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
         }
 
         private void addResultFilesIntoPythonRunnerProfile(PythonRunnerProfileEntity pythonRunnerProfileEntity) throws IOException {
-            try {
-                Set<FileEntity> fileEntities =
-                        Files.find(this.absoluteWorkDirectory, Integer.MAX_VALUE,
-                                (filePath, fileAttr) -> fileAttr.isRegularFile()).map((f) -> {
-                            Path relativePath = this.absoluteWorkDirectory.relativize(f);
-                            logger.info("adding file \"{}\" into result", relativePath.toString());
-                            // default lambda function does not support throws,
-                            // a way to overpass it is to throw an uncheck exception
-                            // and then catch it outside the lambda.
-                            // We use a lambda instead of traditional for-looping a list
-                            // as we must save it to a list and then for-looping it.
-                            try {
-                                return new FileEntity(relativePath.toString(),
-                                        IOUtils.toByteArray(f.toUri()));
-                            } catch (IOException e) {
-                                throw new UncheckedIOException(e);
-                            }
-                        }).collect(Collectors.toSet());
+            try (Stream<Path> stream = Files.find(this.absoluteWorkDirectory, Integer.MAX_VALUE,
+                    (filePath, fileAttr) -> fileAttr.isRegularFile())) {
+                Set<FileEntity> fileEntities = stream.map((f) -> {
+                    Path relativePath = this.absoluteWorkDirectory.relativize(f);
+                    logger.info("adding file \"{}\" into result", relativePath.toString());
+                    // default lambda function does not support throws,
+                    // a way to overpass it is to throw an uncheck exception
+                    // and then catch it outside the lambda.
+                    // We use a lambda instead of traditional for-looping a list
+                    // as we must save it to a list and then for-looping it.
+                    try {
+                        return new FileEntity(relativePath.toString(),
+                                IOUtils.toByteArray(f.toUri()));
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                }).collect(Collectors.toSet());
                 pythonRunnerProfileEntity.setResult(fileEntities);
             } catch (UncheckedIOException e) {
                 throw e.getCause();

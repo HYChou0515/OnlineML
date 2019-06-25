@@ -2,12 +2,12 @@ package io.hychou.libsvm.train.service.impl;
 
 import io.hychou.data.entity.DataEntity;
 import io.hychou.libsvm.parameter.LibsvmTrainParameterEntity;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -16,10 +16,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import static io.hychou.common.Constant.LIBSVM_DELIMITERS;
-import static io.hychou.common.util.AssertUtils.assertListOfLibsvmTokenEquals;
+import static io.hychou.test.common.util.AssertUtils.assertListOfLibsvmTokenEquals;
 
+
+@ExtendWith(MockitoExtension.class)
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class TrainServiceImplTest {
 
     @Autowired
@@ -28,7 +29,7 @@ public class TrainServiceImplTest {
     private LibsvmTrainParameterEntity libsvmTrainParameterEntity;
     private DataEntity data;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         libsvmTrainParameterEntity = new LibsvmTrainParameterEntity();
 

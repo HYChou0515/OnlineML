@@ -1,9 +1,8 @@
 package io.hychou.data.util;
 
 import io.hychou.common.exception.IllegalArgumentException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -11,7 +10,8 @@ import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(SpringRunner.class)
+
+@SpringBootTest
 public class DataUtilsTest {
     @Test
     public void checkData_givenValidData_shouldNotThrowAnything() throws Exception {

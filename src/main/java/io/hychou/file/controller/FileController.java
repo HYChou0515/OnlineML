@@ -1,10 +1,10 @@
 package io.hychou.file.controller;
 
 import io.hychou.common.MessageResponseEntity;
-import io.hychou.common.datastructure.blob.service.BlobService;
 import io.hychou.common.exception.service.ServiceException;
 import io.hychou.file.entity.FileEntity;
 import io.hychou.file.entity.FileInfo;
+import io.hychou.file.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -21,10 +21,10 @@ import static io.hychou.common.utilities.TransformUtilities.getBytesFrom;
 @RestController
 public class FileController {
 
-    private final BlobService<FileEntity, FileInfo> fileService;
+    private final FileService<FileInfo> fileService;
 
     @Autowired
-    public FileController(BlobService<FileEntity, FileInfo> fileService) {
+    public FileController(FileService<FileInfo> fileService) {
         this.fileService = fileService;
     }
 

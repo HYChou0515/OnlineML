@@ -1,17 +1,20 @@
 package io.hychou.data.entity;
 
-import io.hychou.common.DataStructureTest;
-import org.junit.Before;
-import org.junit.Test;
+import io.hychou.test.common.DataStructureTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
+@SpringBootTest
 public class IndexValueTest extends DataStructureTest {
 
     private IndexValue s1;
     private String s1ToString = "IndexValue{index=1, value=2.0}";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         s1 = new IndexValue();
         s1.setIndex(1);

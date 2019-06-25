@@ -1,23 +1,21 @@
 package io.hychou.libsvm.prediction.service.impl;
 
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.clienterror.ElementNotExistException;
-import io.hychou.common.exception.service.clienterror.NullParameterException;
+import io.hychou.common.exception.service.client.ElementNotExistException;
+import io.hychou.common.exception.service.client.NullParameterException;
 import io.hychou.libsvm.prediction.dao.PredictionEntityRepository;
 import io.hychou.libsvm.prediction.entity.PredictionEntity;
 import io.hychou.libsvm.prediction.service.PredictionService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+
 public class PredictionServiceImplTest {
 
     private PredictionEntityRepository predictionEntityRepository = Mockito.mock(PredictionEntityRepository.class);
@@ -30,7 +28,7 @@ public class PredictionServiceImplTest {
     private PredictionEntity nullIdPrediction;
     private PredictionEntity nullDataBytesPrediction;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         nullPrediction = null;
         nullIdPrediction = new PredictionEntity(null, "null id prediction".getBytes());

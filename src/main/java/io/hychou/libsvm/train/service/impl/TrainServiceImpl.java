@@ -1,9 +1,9 @@
 package io.hychou.libsvm.train.service.impl;
 
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.clienterror.IllegalParameterException;
-import io.hychou.common.exception.service.servererror.FileSystemReadException;
-import io.hychou.common.exception.service.servererror.FileSystemWriteException;
+import io.hychou.common.exception.service.client.IllegalParameterException;
+import io.hychou.common.exception.service.server.FileSystemReadException;
+import io.hychou.common.exception.service.server.FileSystemWriteException;
 import io.hychou.common.utilities.IOUtilities;
 import io.hychou.config.LibsvmPathProperties;
 import io.hychou.data.entity.DataEntity;

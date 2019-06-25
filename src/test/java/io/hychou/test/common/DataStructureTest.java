@@ -1,4 +1,4 @@
-package io.hychou.common;
+package io.hychou.test.common;
 
 import java.util.Objects;
 

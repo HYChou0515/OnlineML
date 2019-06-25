@@ -1,23 +1,23 @@
 package io.hychou.libsvm.model.service.impl;
 
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.clienterror.ElementNotExistException;
-import io.hychou.common.exception.service.clienterror.NullParameterException;
+import io.hychou.common.exception.service.client.ElementNotExistException;
+import io.hychou.common.exception.service.client.NullParameterException;
 import io.hychou.libsvm.model.dao.ModelEntityRepository;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.model.service.ModelService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+
+@SpringBootTest
 public class ModelServiceImplTest {
 
     private ModelEntityRepository modelEntityRepository = Mockito.mock(ModelEntityRepository.class);
@@ -30,7 +30,7 @@ public class ModelServiceImplTest {
     private ModelEntity nullIdModel;
     private ModelEntity nullDataBytesModel;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         nullModel = null;
         nullIdModel = new ModelEntity(null, "null id model".getBytes());

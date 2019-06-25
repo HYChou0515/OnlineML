@@ -29,7 +29,7 @@ public abstract class AbstractCrudDataStructure extends AbstractDataStructure {
     }
 
     public String getStringNotExistForParam(String paramString, Object param) {
-        return getEntityName() + "with " + paramString + "=" + param.toString() + " does not exist";
+        return getEntityName() + " with " + paramString + "=" + param.toString() + " does not exist";
     }
 
     public String getStringCreateExistingForParam(String paramString, Object param) {

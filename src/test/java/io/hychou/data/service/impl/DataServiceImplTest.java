@@ -1,19 +1,18 @@
 package io.hychou.data.service.impl;
 
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.clienterror.ElementAlreadyExistException;
-import io.hychou.common.exception.service.clienterror.ElementNotExistException;
-import io.hychou.common.exception.service.clienterror.IllegalParameterException;
-import io.hychou.common.exception.service.clienterror.NullParameterException;
+import io.hychou.common.exception.service.client.ElementAlreadyExistException;
+import io.hychou.common.exception.service.client.ElementNotExistException;
+import io.hychou.common.exception.service.client.IllegalParameterException;
+import io.hychou.common.exception.service.client.NullParameterException;
 import io.hychou.data.dao.DataEntityRepository;
 import io.hychou.data.entity.DataEntity;
 import io.hychou.data.entity.DataInfo;
 import io.hychou.data.service.DataService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -25,7 +24,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+
+@SpringBootTest
 public class DataServiceImplTest {
 
     private DataEntityRepository dataEntityRepository = Mockito.mock(DataEntityRepository.class);
@@ -41,7 +41,7 @@ public class DataServiceImplTest {
     private DataEntity nullNameData;
     private DataEntity nullDataBytesData;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         File heartScale = ResourceUtils.getFile("classpath:data/heart_scale");
         File heartScaleBad = ResourceUtils.getFile("classpath:data/bad/index_not_ascending");

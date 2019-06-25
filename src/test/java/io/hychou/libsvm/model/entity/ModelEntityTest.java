@@ -1,20 +1,20 @@
 package io.hychou.libsvm.model.entity;
 
-import io.hychou.common.DataStructureTest;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
+import io.hychou.test.common.DataStructureTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+
+@SpringBootTest
 public class ModelEntityTest extends DataStructureTest {
 
     private ModelEntity entity;
     private String entityToString = "ModelEntity{id=2}";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         entity = new ModelEntity(2L, "this is entity".getBytes());
     }

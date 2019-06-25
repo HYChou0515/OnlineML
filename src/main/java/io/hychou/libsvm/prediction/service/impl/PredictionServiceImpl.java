@@ -1,8 +1,8 @@
 package io.hychou.libsvm.prediction.service.impl;
 
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.clienterror.ElementNotExistException;
-import io.hychou.common.exception.service.clienterror.NullParameterException;
+import io.hychou.common.exception.service.client.ElementNotExistException;
+import io.hychou.common.exception.service.client.NullParameterException;
 import io.hychou.libsvm.prediction.dao.PredictionEntityRepository;
 import io.hychou.libsvm.prediction.entity.PredictionEntity;
 import io.hychou.libsvm.prediction.service.PredictionService;

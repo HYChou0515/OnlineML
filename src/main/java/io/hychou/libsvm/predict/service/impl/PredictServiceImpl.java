@@ -1,9 +1,8 @@
 package io.hychou.libsvm.predict.service.impl;
 
+import io.hychou.common.exception.server.ServerIOException;
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.clienterror.IllegalParameterException;
-import io.hychou.common.exception.service.servererror.ServerIOException;
-import io.hychou.common.exception.service.servererror.SvmLoadModelException;
+import io.hychou.common.exception.service.client.IllegalParameterException;
 import io.hychou.data.entity.DataEntity;
 import io.hychou.data.entity.DataPoint;
 import io.hychou.libsvm.model.entity.ModelEntity;
@@ -49,7 +48,7 @@ public class PredictServiceImpl implements PredictService {
         try {
             return svm_load_model(bf);
         } catch (IOException e) {
-            throw new SvmLoadModelException("Cannot convert ModelEntity to svm_model, format not correct?", e);
+            throw new ServerIOException("Cannot convert ModelEntity to svm_model, format not correct?", e);
         }
     }
 

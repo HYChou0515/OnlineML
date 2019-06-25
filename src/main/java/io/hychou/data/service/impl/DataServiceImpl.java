@@ -2,10 +2,10 @@ package io.hychou.data.service.impl;
 
 import io.hychou.common.exception.IllegalArgumentException;
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.clienterror.ElementAlreadyExistException;
-import io.hychou.common.exception.service.clienterror.ElementNotExistException;
-import io.hychou.common.exception.service.clienterror.IllegalParameterException;
-import io.hychou.common.exception.service.clienterror.NullParameterException;
+import io.hychou.common.exception.service.client.ElementAlreadyExistException;
+import io.hychou.common.exception.service.client.ElementNotExistException;
+import io.hychou.common.exception.service.client.IllegalParameterException;
+import io.hychou.common.exception.service.client.NullParameterException;
 import io.hychou.data.dao.DataEntityRepository;
 import io.hychou.data.entity.DataEntity;
 import io.hychou.data.entity.DataInfo;

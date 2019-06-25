@@ -2,14 +2,13 @@ package io.hychou.libsvm.model.controller;
 
 import com.google.common.net.HttpHeaders;
 import io.hychou.common.Constant;
-import io.hychou.common.ControllerTest;
 import io.hychou.common.MessageResponseEntity;
 import io.hychou.common.exception.service.ServiceException;
 import io.hychou.libsvm.model.entity.ModelEntity;
 import io.hychou.libsvm.model.service.ModelService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import io.hychou.test.common.ControllerTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -27,7 +25,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-@RunWith(SpringRunner.class)
+
 @WebMvcTest(ModelController.class)
 public class ModelControllerTest extends ControllerTest {
 
@@ -45,7 +43,7 @@ public class ModelControllerTest extends ControllerTest {
         }
     };
 
-    @Before
+    @BeforeEach
     public void setUp() {
         a9aModel = new ModelEntity();
         a9aModel.setId(1L);

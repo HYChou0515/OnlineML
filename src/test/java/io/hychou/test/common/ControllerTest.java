@@ -1,4 +1,4 @@
-package io.hychou.common;
+package io.hychou.test.common;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;

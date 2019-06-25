@@ -1,20 +1,18 @@
 package io.hychou.libsvm.prediction.entity;
 
-import io.hychou.common.DataStructureTest;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
+import io.hychou.test.common.DataStructureTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+
 public class PredictionEntityTest extends DataStructureTest {
 
     private PredictionEntity entity;
     private String entityToString = "PredictionEntity{id=2}";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         entity = new PredictionEntity(2L, "this is entity".getBytes());
     }

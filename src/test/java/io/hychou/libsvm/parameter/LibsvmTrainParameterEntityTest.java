@@ -1,23 +1,23 @@
 package io.hychou.libsvm.parameter;
 
-import io.hychou.common.DataStructureTest;
+import io.hychou.test.common.DataStructureTest;
 import libsvm.svm_parameter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+
+@SpringBootTest
 public class LibsvmTrainParameterEntityTest extends DataStructureTest {
 
     private LibsvmTrainParameterEntity entity;
     private svm_parameter defaultParam;
     private String entityToString = "LibsvmTrainParameterEntity{svmType=C_SVC, kernelType=LINEAR, degree=1, gamma=2.0, coef0=3.0, cacheSize=4.0, eps=5.0, c=6.0, nu=7.0, p=8.0, shrinking=true, probability=false}";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         entity = new LibsvmTrainParameterEntity();
 

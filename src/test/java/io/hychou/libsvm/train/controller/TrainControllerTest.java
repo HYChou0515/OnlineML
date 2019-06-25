@@ -9,16 +9,14 @@ import io.hychou.libsvm.parameter.KernelTypeEnum;
 import io.hychou.libsvm.parameter.LibsvmTrainParameterEntity;
 import io.hychou.libsvm.parameter.SvmTypeEnum;
 import io.hychou.libsvm.train.service.TrainService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Objects;
@@ -28,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@RunWith(SpringRunner.class)
 @WebMvcTest(TrainController.class)
 public class TrainControllerTest {
 
@@ -52,7 +49,7 @@ public class TrainControllerTest {
         }
     };
 
-    @Before
+    @BeforeEach
     public void setUp() {
         a9a = new DataEntity();
         a9a.setName("a9a");

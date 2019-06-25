@@ -1,10 +1,11 @@
 package io.hychou.runnable.python.runner.profile.controller;
 
 import io.hychou.common.MessageResponseEntity;
-import io.hychou.common.datastructure.blob.service.BlobService;
 import io.hychou.common.exception.service.ServiceException;
 import io.hychou.file.entity.FileEntity;
 import io.hychou.file.entity.FileInfo;
+import io.hychou.file.service.FileService;
+import io.hychou.runnable.python.anacondayaml.AnacondaYamlService;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlEntity;
 import io.hychou.runnable.python.anacondayaml.entity.AnacondaYamlInfo;
 import io.hychou.runnable.python.runner.profile.entity.PythonRunnerProfileEntity;
@@ -23,13 +24,13 @@ import static io.hychou.common.Constant.SUCCESS_MESSAGE;
 public class PythonRunnerProfileController {
 
     private final PythonRunnerProfileService pythonRunnerProfileService;
-    private final BlobService<FileEntity, FileInfo> fileService;
-    private final BlobService<AnacondaYamlEntity, AnacondaYamlInfo> anacondaYamlService;
+    private final FileService<FileInfo> fileService;
+    private final AnacondaYamlService<AnacondaYamlInfo> anacondaYamlService;
 
     @Autowired
     public PythonRunnerProfileController(PythonRunnerProfileService pythonRunnerProfileService,
-                                         BlobService<FileEntity, FileInfo> fileService,
-                                         BlobService<AnacondaYamlEntity, AnacondaYamlInfo> anacondaYamlService) {
+                                         FileService<FileInfo> fileService,
+                                         AnacondaYamlService<AnacondaYamlInfo> anacondaYamlService) {
         this.pythonRunnerProfileService = pythonRunnerProfileService;
         this.fileService = fileService;
         this.anacondaYamlService = anacondaYamlService;
@@ -74,7 +75,8 @@ public class PythonRunnerProfileController {
             }
             PythonRunnerProfileEntity pythonRunnerProfileEntity = new PythonRunnerProfileEntity(pythonCode, dependencies, environment);
             pythonRunnerProfileEntity = pythonRunnerProfileService.createPythonRunnerProfile(pythonRunnerProfileEntity);
-            return MessageResponseEntity.ok(pythonRunnerProfileEntity.getId(), SUCCESS_MESSAGE);
+            PythonRunnerProfileInfo pythonRunnerProfileInfo = pythonRunnerProfileService.readPythonRunnerProfileInfoById(pythonRunnerProfileEntity.getId());
+            return MessageResponseEntity.ok(pythonRunnerProfileInfo, SUCCESS_MESSAGE);
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
         }

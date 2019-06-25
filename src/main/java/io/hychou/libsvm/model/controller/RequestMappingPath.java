@@ -6,6 +6,7 @@ final class RequestMappingPath {
     static final String CreateModel = "/model";
     static final String UpdateModelById = "/model/{id}";
     static final String DeleteModelById = "/model/{id}";
+
     private RequestMappingPath() {
     }
 }

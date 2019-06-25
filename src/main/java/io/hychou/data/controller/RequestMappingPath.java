@@ -6,6 +6,7 @@ final class RequestMappingPath {
     static final String CreateDataByName = "/data/{name}";
     static final String UpdateDataByName = "/data/{name}";
     static final String DeleteDataByName = "/data/{name}";
+
     private RequestMappingPath() {
     }
 }

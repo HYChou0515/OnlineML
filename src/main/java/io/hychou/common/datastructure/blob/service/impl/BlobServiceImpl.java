@@ -8,10 +8,12 @@ import io.hychou.common.exception.service.client.ElementNotExistException;
 import io.hychou.common.exception.service.client.IllegalParameterException;
 import io.hychou.common.exception.service.client.NullParameterException;
 import lombok.Getter;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class BlobServiceImpl<BLOB extends BlobEntity, INFO> implements BlobService<BLOB, INFO> {
     protected static final String ID_STRING = "id";
     protected static final String NAME_STRING = "name";

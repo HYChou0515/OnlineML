@@ -11,7 +11,7 @@ public class IOUtilities {
 
     private final static Logger logger = getLogger(IOUtilities.class);
 
-    public static void deleteAndThenCreateDirectory(Path directoryPath) throws IOException {
+    public static void createDirectoryAndDeleteFirstIfPathIsFile(Path directoryPath) throws IOException {
         logger.info("Creating temp directory at: {}", directoryPath.toString());
         if (!directoryPath.toFile().isDirectory() && !directoryPath.toFile().mkdirs()) {
             throw new IOException("Cannot create temp directory at: {}" + directoryPath.toString());

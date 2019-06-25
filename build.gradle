@@ -58,6 +58,7 @@ dependencies {
     compileOnly "org.springframework.boot:spring-boot-configuration-processor"
 
     // Business Dependencies
+    compile group: 'tw.edu.ntu.csie', name: 'libsvm', version: '3.23'
     compile group: 'commons-io', name: 'commons-io', version: '2.4'
     compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
     compile group: 'org.yaml', name: 'snakeyaml', version: '1.24'

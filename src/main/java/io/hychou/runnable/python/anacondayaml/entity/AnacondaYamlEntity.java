@@ -74,7 +74,7 @@ public class AnacondaYamlEntity extends BlobEntity {
         }
         logger.info("start preparing anaconda environment in base dir: \"{}\"", anacondaEnvBaseDir);
         Path environmentBaseDirectory = Paths.get(anacondaEnvBaseDir);
-        IOUtilities.deleteAndThenCreateDirectory(environmentBaseDirectory);
+        IOUtilities.createDirectoryAndDeleteFirstIfPathIsFile(environmentBaseDirectory);
         File environmentDir = getEnvironmentPath().toFile();
         // if the environment path is not a directory, it is not a valid environment path
         if (environmentDir.isDirectory()) {

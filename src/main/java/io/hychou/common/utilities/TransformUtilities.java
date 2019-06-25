@@ -1,7 +1,7 @@
 package io.hychou.common.utilities;
 
 import io.hychou.common.exception.service.ServiceException;
-import io.hychou.common.exception.service.server.MultipartFileCannotGetBytesException;
+import io.hychou.common.exception.service.servererror.MultipartFileCannotGetBytesException;
 import org.springframework.data.util.Pair;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -99,7 +99,7 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
 
         private void prepareEnvironment() throws IOException, InterruptedException, ServerException {
             logger.info("Start preparing environment");
-            IOUtilities.deleteAndThenCreateDirectory(baseWorkingDir);
+            IOUtilities.createDirectoryAndDeleteFirstIfPathIsFile(baseWorkingDir);
             absoluteWorkDirectory = Files.createTempDirectory(baseWorkingDir, null);
             logger.info("The created temp directory: {}", absoluteWorkDirectory);
             absoluteWorkDirectory.toFile().deleteOnExit();

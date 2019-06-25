@@ -5,6 +5,7 @@ import io.hychou.common.crosssystem.LinuxCommand;
 import io.hychou.common.crosssystem.WindowsCommand;
 import io.hychou.common.exception.server.OSNotSupportedException;
 import io.hychou.common.exception.server.ServerException;
+import io.hychou.common.exception.service.ServiceException;
 import io.hychou.common.utilities.IOUtilities;
 import io.hychou.config.RunnablePathProperties;
 import io.hychou.file.entity.FileEntity;
@@ -14,6 +15,8 @@ import io.hychou.runnable.python.runner.profile.dao.PythonRunnerProfileRepositor
 import io.hychou.runnable.python.runner.profile.entity.PythonRunnerProfileEntity;
 import io.hychou.runnable.python.runner.service.PythonRunnerService;
 import io.hychou.runnable.timedependent.entity.TimeDependentEntity;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
@@ -23,11 +26,9 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -40,9 +41,8 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
     private final Logger logger = getLogger(this.getClass());
     private final PythonRunnerProfileRepository pythonRunnerProfileRepository;
     private final AnacondaYamlRepository anacondaYamlRepository;
-    private PythonRunnerProfileEntity pythonRunnerProfileEntity;
-
     private final Path baseWorkingDir;
+    private PythonRunnerProfileEntity pythonRunnerProfileEntity;
 
     public PythonRunnerServiceImpl(@Qualifier("threadPoolTaskExecutor") TaskExecutor mainTaskExecutor,
                                    @Qualifier("threadPoolTaskExecutor") TaskExecutor stdoutStreamGobblerExecutor,
@@ -81,7 +81,7 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
                 cleanEnvironment();
                 pythonRunnerProfileEntity.toFinishedState();
                 pythonRunnerProfileEntity = pythonRunnerProfileRepository.save(pythonRunnerProfileEntity);
-            } catch (ServerException | InterruptedException | IOException e) {
+            } catch (ServiceException | ServerException | InterruptedException | IOException e) {
                 StringWriter stringWriter = new StringWriter();
                 e.printStackTrace(new PrintWriter(stringWriter));
                 pythonRunnerProfileEntity.addErrorMessage(stringWriter.toString());
@@ -99,7 +99,7 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
 
         private void prepareEnvironment() throws IOException, InterruptedException, ServerException {
             logger.info("Start preparing environment");
-            IOUtilities.createDirectory(baseWorkingDir, "base runnable");
+            IOUtilities.deleteAndThenCreateDirectory(baseWorkingDir);
             absoluteWorkDirectory = Files.createTempDirectory(baseWorkingDir, null);
             logger.info("The created temp directory: {}", absoluteWorkDirectory);
             absoluteWorkDirectory.toFile().deleteOnExit();
@@ -112,7 +112,7 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
             }
         }
 
-        private void runPythonCode() throws OSNotSupportedException, IOException, InterruptedException {
+        private void runPythonCode() throws OSNotSupportedException, IOException, InterruptedException, ServiceException {
             logger.info("Start running python code");
             //TODO: add support for linux command
             ProcessBuilder builder = new CrossSystemCommand(
@@ -141,10 +141,36 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
                 pythonRunnerProfileEntity.addErrorMessage(stderr);
             }
             pythonRunnerProfileEntity.setSummary(stdoutJoiner.toString());
+            addResultFilesIntoPythonRunnerProfile(pythonRunnerProfileEntity);
+        }
+
+        private void addResultFilesIntoPythonRunnerProfile(PythonRunnerProfileEntity pythonRunnerProfileEntity) throws IOException {
+            try {
+                Set<FileEntity> fileEntities =
+                        Files.find(this.absoluteWorkDirectory, Integer.MAX_VALUE,
+                                (filePath, fileAttr) -> fileAttr.isRegularFile()).map((f) -> {
+                            Path relativePath = this.absoluteWorkDirectory.relativize(f);
+                            logger.info("adding file \"{}\" into result", relativePath.toString());
+                            // default lambda function does not support throws,
+                            // a way to overpass it is to throw an uncheck exception
+                            // and then catch it outside the lambda.
+                            // We use a lambda instead of traditional for-looping a list
+                            // as we must save it to a list and then for-looping it.
+                            try {
+                                return new FileEntity(relativePath.toString(),
+                                        IOUtils.toByteArray(f.toUri()));
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
+                            }
+                        }).collect(Collectors.toSet());
+                pythonRunnerProfileEntity.setResult(fileEntities);
+            } catch (UncheckedIOException e) {
+                throw e.getCause();
+            }
         }
 
         private void cleanEnvironment() throws IOException {
-//            FileUtils.deleteDirectory(this.absoluteWorkDirectory.toFile());
+            FileUtils.deleteDirectory(this.absoluteWorkDirectory.toFile());
         }
 
         private class StreamGobbler implements Runnable {

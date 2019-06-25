@@ -66,11 +66,11 @@ public class PythonRunnerProfileController {
                                                            @RequestParam(required = false, defaultValue = EMPTY_STRING) Long environmentId,
                                                            @RequestParam(value = "dependenciesIds[]", required = false, defaultValue = EMPTY_STRING) Long[] dependenciesIds) {
         try {
-            FileEntity pythonCode = fileService.readBlobById(pythonCodeId);
-            AnacondaYamlEntity environment = anacondaYamlService.readBlobById(environmentId);
+            FileEntity pythonCode = fileService.readById(pythonCodeId);
+            AnacondaYamlEntity environment = anacondaYamlService.readById(environmentId);
             List<FileEntity> dependencies = new ArrayList<>();
             for (Long dependencyId : dependenciesIds) {
-                dependencies.add(fileService.readBlobById(dependencyId));
+                dependencies.add(fileService.readById(dependencyId));
             }
             PythonRunnerProfileEntity pythonRunnerProfileEntity = new PythonRunnerProfileEntity(pythonCode, dependencies, environment);
             pythonRunnerProfileEntity = pythonRunnerProfileService.createPythonRunnerProfile(pythonRunnerProfileEntity);

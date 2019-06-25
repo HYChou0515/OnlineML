@@ -38,7 +38,8 @@ public class PythonRunnerProfileEntity extends AbstractCrudDataStructure {
 
     @Getter
     @Setter
-    private FileEntity result;
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set<FileEntity> result;
 
     @Getter
     @Setter

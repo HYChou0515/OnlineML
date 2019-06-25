@@ -6,19 +6,19 @@ import io.hychou.common.exception.service.ServiceException;
 import java.util.List;
 
 public interface BlobService<BLOB extends BlobEntity, INFO> {
-    List<INFO> listBlobInfo();
+    List<INFO> listInfo();
 
-    INFO readBlobInfoById(Long id) throws ServiceException;
+    INFO readInfoById(Long id) throws ServiceException;
 
-    BLOB readBlobById(Long id) throws ServiceException;
+    BLOB readById(Long id) throws ServiceException;
 
-    List<INFO> readBlobInfoByName(String name) throws ServiceException;
+    List<INFO> readInfoByName(String name) throws ServiceException;
 
-    List<BLOB> readBlobByName(String name) throws ServiceException;
+    List<BLOB> readByName(String name) throws ServiceException;
 
-    BLOB createBlob(BLOB blob) throws ServiceException;
+    BLOB create(BLOB blob) throws ServiceException;
 
-    BLOB updateBlobById(Long id, byte[] bytes) throws ServiceException;
+    BLOB updateById(Long id, byte[] bytes) throws ServiceException;
 
-    void deleteBlobById(Long id) throws ServiceException;
+    void deleteById(Long id) throws ServiceException;
 }

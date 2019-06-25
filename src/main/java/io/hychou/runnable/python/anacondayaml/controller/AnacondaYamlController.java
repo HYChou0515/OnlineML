@@ -34,10 +34,10 @@ public class AnacondaYamlController {
     @GetMapping(RequestMappingPath.ReadAllAnacondaYamlInfo)
     public MessageResponseEntity readAllAnacondaYamlInfo(@RequestParam(value = "name", required = false, defaultValue = EMPTY_STRING) String name) {
         if (name.isEmpty()) {
-            return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(anacondaYamlService.listBlobInfo());
+            return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(anacondaYamlService.listInfo());
         }
         try {
-            List<AnacondaYamlInfo> anacondaYamlInfoList = anacondaYamlService.readBlobInfoByName(name);
+            List<AnacondaYamlInfo> anacondaYamlInfoList = anacondaYamlService.readInfoByName(name);
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(anacondaYamlInfoList);
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
@@ -47,7 +47,7 @@ public class AnacondaYamlController {
     @GetMapping(RequestMappingPath.ReadAnacondaYamlInfoById)
     public MessageResponseEntity readAnacondaYamlInfoById(@PathVariable Long id) {
         try {
-            AnacondaYamlInfo anacondaYamlInfo = anacondaYamlService.readBlobInfoById(id);
+            AnacondaYamlInfo anacondaYamlInfo = anacondaYamlService.readInfoById(id);
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(anacondaYamlInfo);
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
@@ -57,7 +57,7 @@ public class AnacondaYamlController {
     @GetMapping(RequestMappingPath.ReadAnacondaYamlById)
     public MessageResponseEntity readAnacondaYamlById(@PathVariable Long id) {
         try {
-            AnacondaYamlEntity anacondaYamlEntity = anacondaYamlService.readBlobById(id);
+            AnacondaYamlEntity anacondaYamlEntity = anacondaYamlService.readById(id);
             Resource resource = new ByteArrayResource(anacondaYamlEntity.getBlobBytes());
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).multipartFormData(anacondaYamlEntity.getName(), resource);
         } catch (ServiceException e) {
@@ -70,8 +70,8 @@ public class AnacondaYamlController {
     public MessageResponseEntity createAnacondaYamlByName(@PathVariable String name, @RequestPart("anaconda_yaml") MultipartFile multipartFile) {
         try {
             byte[] bytes = getBytesFrom(multipartFile);
-            AnacondaYamlEntity anacondaYamlEntity = anacondaYamlService.createBlob(new AnacondaYamlEntity(name, bytes, runnablePathProperties.getAnacondaEnvBaseDir()));
-            AnacondaYamlInfo anacondaYamlInfo = anacondaYamlService.readBlobInfoById(anacondaYamlEntity.getId());
+            AnacondaYamlEntity anacondaYamlEntity = anacondaYamlService.create(new AnacondaYamlEntity(name, bytes, runnablePathProperties.getAnacondaEnvBaseDir()));
+            AnacondaYamlInfo anacondaYamlInfo = anacondaYamlService.readInfoById(anacondaYamlEntity.getId());
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).body(anacondaYamlInfo);
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
@@ -82,7 +82,7 @@ public class AnacondaYamlController {
     public MessageResponseEntity updateAnacondaYamlById(@PathVariable Long id, @RequestPart("anaconda_yaml") MultipartFile multipartFile) {
         try {
             byte[] bytes = getBytesFrom(multipartFile);
-            anacondaYamlService.updateBlobById(id, bytes);
+            anacondaYamlService.updateById(id, bytes);
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).build();
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();
@@ -92,7 +92,7 @@ public class AnacondaYamlController {
     @DeleteMapping(RequestMappingPath.DeleteAnacondaYamlById)
     public MessageResponseEntity deleteAnacondaYamlById(@PathVariable Long id) {
         try {
-            anacondaYamlService.deleteBlobById(id);
+            anacondaYamlService.deleteById(id);
             return MessageResponseEntity.ok(SUCCESS_MESSAGE).build();
         } catch (ServiceException e) {
             return e.getMessageResponseEntity();

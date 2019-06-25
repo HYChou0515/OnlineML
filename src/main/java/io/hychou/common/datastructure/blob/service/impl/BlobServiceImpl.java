@@ -25,12 +25,12 @@ public class BlobServiceImpl<BLOB extends BlobEntity, INFO> implements BlobServi
     }
 
     @Override
-    public List<INFO> listBlobInfo() {
+    public List<INFO> listInfo() {
         return blobRepository.findBlobInfoBy();
     }
 
     @Override
-    public INFO readBlobInfoById(Long id) throws ServiceException {
+    public INFO readInfoById(Long id) throws ServiceException {
         if (id == null) {
             throw new NullParameterException(new BlobEntity().getStringQueryWithNullParam(ID_STRING));
         }
@@ -43,7 +43,7 @@ public class BlobServiceImpl<BLOB extends BlobEntity, INFO> implements BlobServi
     }
 
     @Override
-    public BLOB readBlobById(Long id) throws ServiceException {
+    public BLOB readById(Long id) throws ServiceException {
         if (id == null) {
             throw new NullParameterException(new BlobEntity().getStringQueryWithNullParam(ID_STRING));
         }
@@ -56,7 +56,7 @@ public class BlobServiceImpl<BLOB extends BlobEntity, INFO> implements BlobServi
     }
 
     @Override
-    public List<INFO> readBlobInfoByName(String name) throws ServiceException {
+    public List<INFO> readInfoByName(String name) throws ServiceException {
         if (name == null) {
             throw new NullParameterException(new BlobEntity().getStringQueryWithNullParam(NAME_STRING));
         }
@@ -64,7 +64,7 @@ public class BlobServiceImpl<BLOB extends BlobEntity, INFO> implements BlobServi
     }
 
     @Override
-    public List<BLOB> readBlobByName(String name) throws ServiceException {
+    public List<BLOB> readByName(String name) throws ServiceException {
         if (name == null) {
             throw new NullParameterException(new BlobEntity().getStringQueryWithNullParam(NAME_STRING));
         }
@@ -72,7 +72,7 @@ public class BlobServiceImpl<BLOB extends BlobEntity, INFO> implements BlobServi
     }
 
     @Override
-    public BLOB createBlob(BLOB blob) throws ServiceException {
+    public BLOB create(BLOB blob) throws ServiceException {
         if (blob == null || blob.getName() == null || blob.getBlobBytes() == null) {
             throw new NullParameterException(new BlobEntity().getStringCreateNull());
         }
@@ -84,18 +84,18 @@ public class BlobServiceImpl<BLOB extends BlobEntity, INFO> implements BlobServi
     }
 
     @Override
-    public BLOB updateBlobById(Long id, byte[] bytes) throws ServiceException {
+    public BLOB updateById(Long id, byte[] bytes) throws ServiceException {
         if (id == null || bytes == null) {
             throw new NullParameterException(new BlobEntity().getStringUpdateNull());
         }
-        BLOB blob = readBlobById(id);
+        BLOB blob = readById(id);
         blob.setBlobBytes(bytes);
         blob = blobRepository.save(blob);
         return blob;
     }
 
     @Override
-    public void deleteBlobById(Long id) throws ServiceException {
+    public void deleteById(Long id) throws ServiceException {
         if (id == null) {
             throw new NullParameterException(new BlobEntity().getStringDeleteWithNullParam(ID_STRING));
         }

@@ -28,7 +28,7 @@ public interface PythonRunnerProfileInfo {
 
     Date getFinishedTimestamp();
 
-    FileInfo getResult();
+    List<FileInfo> getResult();
 
     String getSummary();
 

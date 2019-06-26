@@ -19,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,7 @@ import java.util.stream.Stream;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
+@Scope("prototype")
 public class PythonRunnerServiceImpl implements PythonRunnerService {
 
     private final TaskExecutor mainTaskExecutor;
@@ -122,7 +124,10 @@ public class PythonRunnerServiceImpl implements PythonRunnerService {
             logger.info("Start running python code");
             //TODO: add support for linux command
             ProcessBuilder builder = new CrossSystemCommand(
-                    new LinuxCommand("sh", "-c", "ls"),
+                    new LinuxCommand("sh", "-c",
+                            String.format("%s; python %s",
+                                    pythonRunnerProfileEntity.getEnvironment().getTimeVariantData().getCondaActivateCommand(),
+                                    pythonRunnerProfileEntity.getPythonCode().getTimeVariantData().getName())),
                     new WindowsCommand("cmd.exe", "/c",
                             String.format("%s && python %s",
                                     pythonRunnerProfileEntity.getEnvironment().getTimeVariantData().getCondaActivateCommand(),

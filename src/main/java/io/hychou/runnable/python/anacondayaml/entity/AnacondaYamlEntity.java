@@ -102,7 +102,7 @@ public class AnacondaYamlEntity extends BlobEntity {
         FileUtils.writeByteArrayToFile(tempYamlFile.toFile(), getBlobBytes());
         // TODO: add support for linux command
         new CrossSystemCommand(
-                new LinuxCommand("sh", "-c", "ls"),
+                new LinuxCommand("sh", "-c", "conda", "env", "create", "-p", getEnvironmentPath().toString(), "-f", tempYamlFile.toString()),
                 new WindowsCommand("cmd.exe", "/c", "conda", "env", "create", "-p", getEnvironmentPath().toString(), "-f", tempYamlFile.toString())
         ).startAndWait();
 
@@ -120,7 +120,7 @@ public class AnacondaYamlEntity extends BlobEntity {
         //TODO: add support for linux command
         logger.info("checking if the environment is in conda list");
         Process process = new CrossSystemCommand(
-                new LinuxCommand("sh", "-c", "ls"),
+                new LinuxCommand("sh", "-c", "conda", "env", "list"),
                 new WindowsCommand("cmd.exe", "/c", "conda", "env", "list")
         ).startAndWait();
         BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -140,7 +140,7 @@ public class AnacondaYamlEntity extends BlobEntity {
     private byte[] getAnacondaEnvironmentYamlByteArray(File environmentDir) throws ServerException, IOException, InterruptedException {
         //TODO: add support for linux command
         Process process = new CrossSystemCommand(
-                new LinuxCommand("sh", "-c", "ls"),
+                new LinuxCommand("sh", "-c", "conda", "env", "export", "-p", environmentDir.getAbsolutePath()),
                 new WindowsCommand("cmd.exe", "/c", "conda", "env", "export", "-p", environmentDir.getAbsolutePath())
         ).startAndWait();
         return IOUtils.toByteArray(process.getInputStream());
